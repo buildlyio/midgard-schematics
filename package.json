@@ -4,14 +4,14 @@
   "description": "CLI tool for assembling a Walhall app based on Midgard and other modules",
   "scripts": {
     "clean": "rimraf lib",
+    "copyjson": "cp ./src/collection.json ./lib/",
     "babel:prod": "babel gulpfile.babel.js --out-file ./lib/gulpfile.js",
-    "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod",
+    "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod && npm run copyjson",
     "test": "npm run build && jasmine **/*_spec.js"
   },
   "main": "./lib/import-module/index.js",
   "files": [
-    "/lib",
-    "/src/collection.json"
+    "/lib"
   ],
   "keywords": [
     "schematics"
