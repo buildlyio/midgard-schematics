@@ -14,9 +14,10 @@ gulp.task('clone', () => {
 
  
 gulp.task('schematics', (cb) => {
-  const child = spawn('ng', ['g', 'midgard-schematics:import-module', '--name=contacts']);
-  console.warn(process.cwd());
+  process.chdir('../');
+
   let exit = {}
+  const child = spawn('ng', ['g', '.:import-module', '--name=contacts']);
 
   child.on('exit', (code, signal) => {
     exit.code = code;
