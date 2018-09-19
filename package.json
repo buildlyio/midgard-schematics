@@ -8,6 +8,10 @@
     "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod",
     "test": "npm run build && jasmine **/*_spec.js"
   },
+  "main": "./lib/import-module/index.js",
+  "files": [
+    "/lib"
+  ],
   "keywords": [
     "schematics"
   ],
