@@ -18,7 +18,7 @@
   ],
   "author": "Aziz Haddad",
   "license": "MIT",
-  "schematics": "./src/collection.json",
+  "schematics": "./lib/collection.json",
   "dependencies": {
     "@angular-devkit/core": "^0.8.1",
     "@angular-devkit/schematics": "^0.8.1",
