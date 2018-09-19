@@ -1,5 +1,5 @@
 import { Rule, Tree, SchematicContext} from '@angular-devkit/schematics';
-import { addImportToNgModule } from '../../utils/ng-module-utils';
+import { addImportToNgModule } from '../utils/ng-module-utils';
 
 export function importModule(options: any): Rule {
 

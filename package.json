@@ -1,9 +1,11 @@
 {
   "name": "midgard-schematics",
   "version": "0.0.1",
-  "description": "A schematics",
+  "description": "CLI tool for assembling a Walhall app based on Midgard and other modules",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf lib",
+    "babel:prod": "babel gulpfile.babel.js --out-file ./lib/gulpfile.js",
+    "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod",
     "test": "npm run build && jasmine **/*_spec.js"
   },
   "keywords": [
@@ -22,8 +24,13 @@
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "gulp": "^3.9.1",
+    "gulp-exec": "^3.0.2",
     "gulp-git": "^2.8.0",
     "jasmine": "^2.8.0",
     "typescript": "^2.5.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "rimraf": "^2.6.2"
   }
 }
