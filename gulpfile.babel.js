@@ -1,18 +1,12 @@
 'use strict';
 
 import gulp from 'gulp';
+import git from 'gulp-git';
 
-const dirs = {
-  src: 'src',
-  dest: 'lib'
-};
-
-const paths = {
-  src: 'src/**.js',
-  dest: 'lib'
-};
-
-gulp.task('test', () => {
-  return gulp.src(paths.src)
-  .pipe(gulp.dest(paths.dest));
+gulp.task('clone', () => {
+  git.clone('git@github.com:Humanitec/midgard-contacts.git', {args: './sub/folder'}, err => {
+    if (err) {
+      throw err;
+    }
+  });
 });
