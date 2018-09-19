@@ -1,0 +1,28 @@
+{
+  "name": "midgard-schematics",
+  "version": "0.0.1",
+  "description": "A schematics",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && jasmine **/*_spec.js"
+  },
+  "keywords": [
+    "schematics"
+  ],
+  "author": "Aziz Haddad",
+  "license": "MIT",
+  "schematics": "./src/collection.json",
+  "dependencies": {
+    "@angular-devkit/core": "^0.8.1",
+    "@angular-devkit/schematics": "^0.8.1",
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@schematics/angular": "^0.8.1",
+    "@types/jasmine": "^2.6.0",
+    "@types/node": "^8.0.31",
+    "gulp": "^3.9.1",
+    "jasmine": "^2.8.0",
+    "typescript": "^2.5.2"
+  }
+}
