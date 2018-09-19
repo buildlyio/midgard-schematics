@@ -10,7 +10,8 @@
   },
   "main": "./lib/import-module/index.js",
   "files": [
-    "/lib"
+    "/lib",
+    "/src/collection.json"
   ],
   "keywords": [
     "schematics"
