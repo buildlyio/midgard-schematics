@@ -32,7 +32,7 @@ const clone = (url, folderName) => {
 
   git.clone(url, options, (err) => {
     if (err) {
-      throw err;
+      console.warn(err.message);
     }
   });
 };
