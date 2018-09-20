@@ -3,10 +3,10 @@ import git from 'gulp-git';
 import { spawn } from 'child_process';
 import { readFileSync } from 'fs';
 
-const originalPath = process.cwd();
+const applicationPath = process.cwd();
 
 const readConfig = () => {
-  const configPath = originalPath + 'config.js';
+  const configPath = applicationPath + '/config.js';
 
   let config;
 
