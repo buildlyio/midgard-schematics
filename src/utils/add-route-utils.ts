@@ -1,40 +1,20 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { AddRouteContext } from "./add-route-context";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
-import { classify, dasherize } from "@angular-devkit/core/src/utils/strings";
+import { classify } from "@angular-devkit/core/src/utils/strings";
 import * as ts from 'typescript';
 import { Change, InsertChange } from "@schematics/angular/utility/change";
 import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: ModuleOptions): AddRouteContext {
 
-    let routingModuleFileName = 'projects/midgard-angular/src/lib/midgard.module.ts';
+    let routingModuleFileName = 'projects/midgard-angular/src/lib/midgard.routing-module.ts';
     let moduleName = classify(`${options.name}Module`);
 
     return {
         routingModuleFileName,
         moduleName
     }
-}
-
-// function findFileByName(file: string, path: string, host: Tree): string {
-//
-//     let dir: any | null = host.getDir(path);
-//
-//     while(dir) {
-//         let routingModuleFileName = dir.path + '/' + file;
-//         if (host.exists(routingModuleFileName)) {
-//             return routingModuleFileName;
-//         }
-//         dir = dir.parent;
-//     }
-//     throw new SchematicsException(`File ${file} not found in ${path} or one of its anchestors`);
-// }
-
-export function constructDestinationPath(options: any): string {
-
-    return '/' + (options.sourceDir? options.sourceDir + '/' : '') + (options.path || '')
-        + (options.flat ? '' : '/' + dasherize(options.name));
 }
 
 function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, options: ModuleOptions): Change {
@@ -96,3 +76,22 @@ export function addRouteRule (options: ModuleOptions): Rule {
     };
 }
 
+// function findFileByName(file: string, path: string, host: Tree): string {
+//
+//     let dir: any | null = host.getDir(path);
+//
+//     while(dir) {
+//         let routingModuleFileName = dir.path + '/' + file;
+//         if (host.exists(routingModuleFileName)) {
+//             return routingModuleFileName;
+//         }
+//         dir = dir.parent;
+//     }
+//     throw new SchematicsException(`File ${file} not found in ${path} or one of its anchestors`);
+// }
+
+// export function constructDestinationPath(options: any): string {
+//
+//     return '/' + (options.sourceDir? options.sourceDir + '/' : '') + (options.path || '')
+//         + (options.flat ? '' : '/' + dasherize(options.name));
+// }
