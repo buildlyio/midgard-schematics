@@ -9,7 +9,7 @@
     "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod && npm run copyjson",
     "test": "npm run build && jasmine **/*_spec.js"
   },
-  "main": "./lib/import-module/index.js",
+  "main": "./src/import-module/index.ts",
   "files": [
     "/lib",
     "/src"
