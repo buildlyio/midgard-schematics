@@ -11,7 +11,8 @@
   },
   "main": "./lib/import-module/index.js",
   "files": [
-    "/lib"
+    "/lib",
+    "/src"
   ],
   "keywords": [
     "schematics"
