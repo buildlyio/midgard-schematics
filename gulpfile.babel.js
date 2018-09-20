@@ -13,13 +13,13 @@ const readConfig = () => {
   try {
     config = readFileSync(configPath);
   } catch (e) {
-    throw new Error("Error loading application configuration: " + e.message);
+    throw new Error('Error loading application configuration: ' + e.message);
   }
 
   try {
     config = JSON.parse(config);
   } catch (e) {
-    throw new Error("Error parsing application configuration: " + e.message);
+    throw new Error('Error parsing application configuration: ' + e.message);
   }
 
   return config;
@@ -42,13 +42,13 @@ gulp.task('modules:init', () => {
   const config = readConfig();
 
   if (!config) {
-    throw new Error("Application configuration not found");
+    throw new Error('Application configuration not found');
   }
 
   if (!config.modules || !config.modules.length) {
-    throw new Error("No application modules found");
+    throw new Error('No application modules found');
   }
- 
+
   process.chdir('projects');
   for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
