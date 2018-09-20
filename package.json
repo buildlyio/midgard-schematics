@@ -1,6 +1,6 @@
 {
   "name": "midgard-schematics",
-  "version": "0.1.14",
+  "version": "0.1.12",
   "description": "CLI tool for assembling a Walhall app based on Midgard and other modules",
   "scripts": {
     "clean": "rimraf lib",
@@ -9,17 +9,16 @@
     "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod && npm run copyjson",
     "test": "npm run build && jasmine **/*_spec.js"
   },
-  "main": "./src/import-module/index.ts",
+  "main": "./lib/import-module/index.js",
   "files": [
-    "/lib",
-    "/src"
+    "/lib"
   ],
   "keywords": [
     "schematics"
   ],
   "author": "Aziz Haddad",
   "license": "MIT",
-  "schematics": "./src/collection.json",
+  "schematics": "./lib/collection.json",
   "dependencies": {
     "@angular-devkit/core": "^0.8.1",
     "@angular-devkit/schematics": "^0.8.1",
