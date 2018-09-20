@@ -50,6 +50,8 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
     childrenRoutesNodeSiblings = childrenRoutesNodeSiblings.slice(openBracketNodeIndex);
 
+    console.log(childrenRoutesNodeSiblings);
+
     let listNode = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.SyntaxList);
 
     if (!listNode) {
