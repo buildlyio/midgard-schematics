@@ -26,7 +26,6 @@ const readConfig = () => {
 };
 
 const clone = (url, folderName) => {
-
   const options = {
     args: folderName
   };
@@ -54,6 +53,8 @@ gulp.task('modules:init', () => {
     const module = config.modules[i];
     if (module.url) {
       clone(module.url, module.name);
+    } else {
+      console.warn(`Module ${module.name} has no repo url specified`);
     }
   }
   process.chdir('../');
