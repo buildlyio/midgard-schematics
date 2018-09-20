@@ -6,7 +6,7 @@ import { readFileSync } from 'fs';
 const applicationPath = process.cwd();
 
 const readConfig = () => {
-  const configPath = applicationPath + '/config.js';
+  const configPath = applicationPath + '/config.json';
 
   let config;
 
