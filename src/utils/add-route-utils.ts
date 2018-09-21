@@ -54,7 +54,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
         {path: '${options.name}', loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'}
     `;
 
-    return new InsertChange(context.routingModuleFileName, listNode.getEnd()+1, toAdd);
+    return new InsertChange(context.routingModuleFileName, listNode.getEnd(), toAdd);
 }
 
 export function addRouteRule (options: ModuleOptions): Rule {
