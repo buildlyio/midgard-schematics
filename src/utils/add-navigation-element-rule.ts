@@ -11,15 +11,14 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         if(content) strContent = content.toString();
         const cheerioDom = cheerio.load(strContent);
         const navBarElem = cheerioDom(".nav-bar");
-        const contentToInsert = `
-        <div class="nav-bar__elem">
+        const contentToInsert = `<div class="nav-bar__elem">
             <a [routerLink]="['/${options.name}']">
                 <i class="fas fa-store"></i>
                 ${capitalize(options.name)}
             </a>
         </div>`;
         navBarElem.append(contentToInsert);
-        host.overwrite(navigationPath, cheerioDom.html().toString());
+        host.overwrite(navigationPath, cheerioDom.html());
         return host;
     };
 }
