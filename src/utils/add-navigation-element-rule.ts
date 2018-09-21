@@ -18,7 +18,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
             </a>
         </div>`;
         navBarElem.append(contentToInsert);
-        host.overwrite(navigationPath, navBarElem.toString());
+        host.overwrite(navigationPath, navBarElem.text());
         return host;
     };
 }
