@@ -1,7 +1,7 @@
 import { Rule, Tree, SchematicContext, chain} from '@angular-devkit/schematics';
-import { addImportToNgModule } from '../utils/ng-module-utils';
-import { addRouteRule } from "../utils/add-route-utils";
-import { addAddReducersAndEpicsRule } from "../utils/add-reducers-and-epics-utils";
+// import { addImportToNgModule } from '../utils/ng-module-utils';
+// import { addRouteRule } from "../utils/add-route-utils";
+// import { addAddReducersAndEpicsRule } from "../utils/add-reducers-and-epics-utils";
 import { addNavigationElementRule } from "../utils/add-navigation-element-rule";
 
 export function importModule(options: any): Rule {
