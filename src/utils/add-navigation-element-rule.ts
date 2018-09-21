@@ -11,12 +11,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         if(content) strContent = content.toString('utf8');
         const dom = new JSDOM(strContent);
         const navBarElem = dom.window.document.querySelector(".nav-bar");
-        const contentToInsert = dom.window.document.createElement(`<div class="nav-bar__elem">
-            <a [routerLink]="['/${options.name}']">
-                <i class="fas fa-store"></i>
-                ${capitalize(options.name)}
-            </a>
-        </div>`);
+        const contentToInsert = dom.window.document.createElement(`<div class="nav-bar__elem"><a [routerLink]="['/${options.name}']"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`);
         if(!navBarElem || !navBarElem.parentNode) {
             throw new SchematicsException(`Navbar element is not defined`);
         }
