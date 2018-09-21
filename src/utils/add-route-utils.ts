@@ -8,23 +8,23 @@ import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: ModuleOptions): AddRouteContext {
 
-    let routingModuleFileName = 'projects/midgard-angular/src/lib/midgard.routing-module.ts';
+    let routingModulePath = 'projects/midgard-angular/src/lib/midgard.routing-module.ts';
     let moduleName = classify(`${options.name}Module`);
 
     return {
-        routingModuleFileName,
+        routingModulePath,
         moduleName
     }
 }
 
 function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, options: ModuleOptions): Change {
 
-    let text = host.read(context.routingModuleFileName);
+    let text = host.read(context.routingModulePath);
     if (!text) throw new SchematicsException(`Routing module does not exist.`);
     let sourceText = text.toString('utf-8');
 
     // create the typescript source file
-    let sourceFile = ts.createSourceFile(context.routingModuleFileName, sourceText, ts.ScriptTarget.Latest, true);
+    let sourceFile = ts.createSourceFile(context.routingModulePath, sourceText, ts.ScriptTarget.Latest, true);
 
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
@@ -32,7 +32,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     const childrenRoutesNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'children');
 
     if (!childrenRoutesNode || !childrenRoutesNode.parent) {
-        throw new SchematicsException(`expected routes variable in ${context.routingModuleFileName}`);
+        throw new SchematicsException(`expected routes variable in ${context.routingModulePath}`);
     }
 
     let childrenRoutesNodeSiblings = childrenRoutesNode.parent.getChildren();
@@ -51,10 +51,9 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
         throw new SchematicsException(`listNode is not defined`);
     }
     let toAdd = `,
-      {path: '${options.name}', loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'}
-    `;
+      {path: '${options.name}', loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'}`;
 
-    return new InsertChange(context.routingModuleFileName, listNode.getEnd(), toAdd);
+    return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
 }
 
 export function addRouteRule (options: ModuleOptions): Rule {
@@ -62,7 +61,7 @@ export function addRouteRule (options: ModuleOptions): Rule {
         let context = createAddRouteContext(options);
         let change = addRouteToChildrenRoutesArray(context, host, options);
 
-        const declarationRecorder = host.beginUpdate(context.routingModuleFileName);
+        const declarationRecorder = host.beginUpdate(context.routingModulePath);
         if (change instanceof InsertChange) {
             declarationRecorder.insertLeft(change.pos, change.toAdd);
         }
