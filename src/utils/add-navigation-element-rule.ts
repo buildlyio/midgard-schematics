@@ -9,7 +9,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         const content: Buffer | null = host.read(navigationPath);
         let strContent: string = '';
         if(content) strContent = content.toString('utf8');
-        const cheerioDom = cheerio.load(strContent);
+        const cheerioDom = cheerio.load(strContent, {decodeEntities: false});
         const navBarElem = cheerioDom('.nav-bar');
         const contentToInsert = `<div class="nav-bar__elem">
             <a [routerLink]="['/${options.name}']">
@@ -18,7 +18,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
             </a>
         </div>`;
         navBarElem.append(contentToInsert);
-        host.overwrite(navigationPath, navBarElem.text());
+        host.overwrite(navigationPath, navBarElem.toString());
         return host;
     };
 }
