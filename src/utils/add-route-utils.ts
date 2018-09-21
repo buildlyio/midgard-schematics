@@ -31,17 +31,12 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // find the children routes node
     const childrenRoutesNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'children');
 
-    if (!childrenRoutesNode) {
+    if (!childrenRoutesNode || !childrenRoutesNode.parent) {
         throw new SchematicsException(`expected routes variable in ${context.routingModuleFileName}`);
-    }
-
-    if (!childrenRoutesNode.parent) {
-        throw new SchematicsException('childrenRoutesNode.parent is not defined');
     }
 
     let childrenRoutesNodeSiblings = childrenRoutesNode.parent.getChildren();
     let childrenRoutesNodeIndex = childrenRoutesNodeSiblings.indexOf(childrenRoutesNode);
-
     childrenRoutesNodeSiblings = childrenRoutesNodeSiblings.slice(childrenRoutesNodeIndex);
 
     let arrayLiteralExpressionNode = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
