@@ -1,9 +1,7 @@
 import { Rule, Tree } from "@angular-devkit/schematics";
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { capitalize } from "@angular-devkit/core/src/utils/strings";
-const jsdom = require('jsdom').jsdom
-
-const { JSDOM } = jsdom;
+import * as cheerio from 'cheerio'
 
 export function addNavigationElementRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
@@ -11,11 +9,17 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         const content: Buffer | null = host.read(navigationPath);
         let strContent: string = '';
         if(content) strContent = content.toString();
-        const dom = new JSDOM(strContent);
-        const navBarElem = dom.window.document.querySelector("nav-bar");
-        const contentToInsert = `<div class="nav-bar__elem"><a [routerLink]="['/${options.name}']"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
-        navBarElem.parentNode.insertBefore(contentToInsert, navBarElem.nextSibling);
-        host.overwrite(navigationPath, dom.window.document.documentElement.outerHTML);
+        const cheerioDom = cheerio.load(strContent);
+        const navBarElem = cheerioDom(".nav-bar");
+        const contentToInsert = `
+        <div class="nav-bar__elem">
+            <a [routerLink]="['/${options.name}']">
+                <i class="fas fa-store"></i>
+                ${capitalize(options.name)}
+            </a>
+        </div>`;
+        navBarElem.append(contentToInsert);
+        host.overwrite(navigationPath, cheerioDom.html().toString());
         return host;
     };
 }
