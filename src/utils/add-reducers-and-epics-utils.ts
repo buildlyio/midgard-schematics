@@ -52,7 +52,7 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
     epicsNodeSiblings = epicsNodeSiblings.slice(epicsNodeIndex);
 
     // get reducers array literal experssion
-    let reducersArrayLiteralExpressionNode = reducersNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
+    let reducersArrayLiteralExpressionNode = reducersNodeSiblings.find(n => n.kind === ts.SyntaxKind.ObjectLiteralExpression);
 
     if (!reducersArrayLiteralExpressionNode) {
         throw new SchematicsException(`reducersArrayLiteralExpressionNode is not defined`);
