@@ -44,15 +44,13 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
     childrenRoutesNodeSiblings = childrenRoutesNodeSiblings.slice(childrenRoutesNodeIndex);
 
-    // Find opening brackets (OpenBracketToken means '[' here).
-    let openBracketNode: any = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.OpenBracketToken);
-    let openBracketNodeIndex = childrenRoutesNodeSiblings.indexOf(openBracketNode);
+    let arrayLiteralExpressionNode = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
 
-    childrenRoutesNodeSiblings = childrenRoutesNodeSiblings.slice(openBracketNodeIndex);
+    if (!arrayLiteralExpressionNode) {
+        throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
+    }
 
-    console.log(childrenRoutesNodeSiblings);
-
-    let listNode = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.SyntaxList);
+    let listNode = arrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
 
     if (!listNode) {
         throw new SchematicsException(`listNode is not defined`);
@@ -60,8 +58,6 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     let toAdd = `{path: ${options.name}, loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'`;
     return new InsertChange(context.routingModuleFileName, listNode.getEnd()-1, toAdd);
 }
-
-
 
 export function addRouteRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
