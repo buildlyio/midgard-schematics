@@ -11,9 +11,9 @@ export function importModule(options: any): Rule {
     options.module = 'projects/midgard-angular/src/lib/midgard.module.ts';
 
     const rule = chain([
-        addImportToNgModule(options),
-        addRouteRule(options),
-        addAddReducersAndEpicsRule(options),
+        // addImportToNgModule(options),
+        // addRouteRule(options),
+        // addAddReducersAndEpicsRule(options),
         addNavigationElementRule(options)
         ]);
 
