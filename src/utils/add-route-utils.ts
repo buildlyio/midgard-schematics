@@ -50,7 +50,10 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     if (!listNode) {
         throw new SchematicsException(`listNode is not defined`);
     }
-    let toAdd = `,{path: '${options.name}', loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'}`;
+    let toAdd = `,
+        {path: '${options.name}', loadChildren: '@libs/midgard-angular/src/lib/${options.name}.module#${context.moduleName}'}
+    `;
+
     return new InsertChange(context.routingModuleFileName, listNode.getEnd()+1, toAdd);
 }
 
