@@ -71,20 +71,6 @@ export function addRouteRule (options: ModuleOptions): Rule {
     };
 }
 
-// function findFileByName(file: string, path: string, host: Tree): string {
-//
-//     let dir: any | null = host.getDir(path);
-//
-//     while(dir) {
-//         let routingModuleFileName = dir.path + '/' + file;
-//         if (host.exists(routingModuleFileName)) {
-//             return routingModuleFileName;
-//         }
-//         dir = dir.parent;
-//     }
-//     throw new SchematicsException(`File ${file} not found in ${path} or one of its anchestors`);
-// }
-
 // export function constructDestinationPath(options: any): string {
 //
 //     return '/' + (options.sourceDir? options.sourceDir + '/' : '') + (options.path || '')

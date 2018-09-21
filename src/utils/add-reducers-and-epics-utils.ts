@@ -2,17 +2,24 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
 import { Change, InsertChange } from "@schematics/angular/utility/change";
-import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
+import { getSourceNodes, insertImport } from "@schematics/angular/utility/ast-utils";
 import { AddReducersAndEpicsContext } from "./add-reducers-and-epics-context";
+import { dasherize } from "@angular-devkit/core/src/utils/strings";
 
 function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAndEpicsContext {
 
     let storeModulePath = 'projects/midgard-angular/src/lib/modules/store-module/store.ts';
-    let moduleName = options.name;
+    let reducerName = `${options.name}Reducer`;
+    let epicName = `${options.name}Epic`;
+    let reducerRelativeFileName = `@libs/${options.name}/src/lib/state/${dasherize(options.name)}.reducer`;
+    let epicRelativeFileName = `@libs/${options.name}/src/lib/state/${dasherize(options.name)}.epic`;
 
     return {
         storeModulePath,
-        moduleName
+        reducerName,
+        reducerRelativeFileName,
+        epicName,
+        epicRelativeFileName
     }
 }
 
@@ -52,9 +59,9 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
     epicsNodeSiblings = epicsNodeSiblings.slice(epicsNodeIndex);
 
     // get reducers array literal experssion
-    let reducersArrayLiteralExpressionNode = reducersNodeSiblings.find(n => n.kind === ts.SyntaxKind.ObjectLiteralExpression);
+    let reducersObjectLiteralExpressionNode = reducersNodeSiblings.find(n => n.kind === ts.SyntaxKind.ObjectLiteralExpression);
 
-    if (!reducersArrayLiteralExpressionNode) {
+    if (!reducersObjectLiteralExpressionNode) {
         throw new SchematicsException(`reducersArrayLiteralExpressionNode is not defined`);
     }
 
@@ -66,7 +73,7 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
     }
 
     // get reducers array list node
-    let reducersListNode = reducersArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
+    let reducersListNode = reducersObjectLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
 
     if (!reducersListNode) {
         throw new SchematicsException(`reducersListNode is not defined`);
@@ -79,14 +86,16 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         throw new SchematicsException(`epicsListNode is not defined`);
     }
     let reducerToAdd = `,
-      ${context.moduleName}Reducer`;
+      ${context.reducerName}`;
 
     let epicToAdd = `,
-      ${context.moduleName}Epic`;
+      ${context.epicName}`;
 
     return [
         new InsertChange(context.storeModulePath, reducersListNode.getEnd(), reducerToAdd),
         new InsertChange(context.storeModulePath, epicsListNode.getEnd(), epicToAdd),
+        insertImport(sourceFile, context.storeModulePath, context.reducerName, context.reducerRelativeFileName),
+        insertImport(sourceFile, context.storeModulePath, context.epicName, context.epicRelativeFileName)
     ]
 }
 
