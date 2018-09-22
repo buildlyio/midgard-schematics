@@ -11,7 +11,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         if(content) strContent = content.toString('utf8');
         const cheerioDom = cheerio.load(strContent, {decodeEntities: false});
         const navBarElem = cheerioDom('.nav-bar');
-        const contentToInsert = `<div class="nav-bar__elem"><a [routerLink]="['/${options.name}']"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
+        const contentToInsert = `<div class="nav-bar__elem"><a routerLink="/${options.name}"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
         navBarElem.append(contentToInsert);
         host.overwrite(navigationPath, navBarElem.toString());
         return host;
