@@ -61,7 +61,6 @@ export function updateTsConfigRule(options: ModuleOptions): Rule {
                 tsconfig.compilerOptions.paths[options.name] = [];
             }
             tsconfig.compilerOptions.paths[options.name].push(`dist/${options.name}`);
-            tsconfig.compilerOptions.paths[`${options.name}/*`].push(`dist/${options.name}/*`);
         });
     };
 }
