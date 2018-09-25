@@ -43,7 +43,7 @@ export function updateAppTsConfigRule (options: ModuleOptions): Rule {
             if (!tsconfig.include) {
                 tsconfig.include = [];
             }
-            tsconfig.include.push(`../projects/midgard-angular/src/lib/${options.name}.module.ts`);
+            tsconfig.include.push(`../projects/${options.name}/src/lib/${options.name}.module.ts`);
         });
     };
 }
@@ -61,6 +61,7 @@ export function updateTsConfigRule(options: ModuleOptions): Rule {
                 tsconfig.compilerOptions.paths[options.name] = [];
             }
             tsconfig.compilerOptions.paths[options.name].push(`dist/${options.name}`);
+            tsconfig.compilerOptions.paths[`${options.name}/*`].push(`dist/${options.name}/*`);
         });
     };
 }
