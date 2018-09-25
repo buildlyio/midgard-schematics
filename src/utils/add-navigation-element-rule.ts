@@ -9,7 +9,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         const content: Buffer | null = host.read(navigationPath);
         let strContent: string = '';
         if(content) strContent = content.toString('utf8');
-        const cheerioDom = cheerio.load(strContent, {decodeEntities: false});
+        const cheerioDom = cheerio.load(strContent);
         const navBarElem = cheerioDom('.nav-bar');
         const contentToInsert = `<div class="nav-bar__elem"><a routerLink="/${options.name}"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
         navBarElem.append(contentToInsert);

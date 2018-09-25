@@ -1,18 +1,12 @@
-import { Rule, SchematicContext, Tree } from "@angular-devkit/schematics";
+import { Rule, Tree } from "@angular-devkit/schematics";
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
-import { getWorkspace, getWorkspacePath, WorkspaceSchema } from "@schematics/angular/utility/config";
+import { getWorkspace, getWorkspacePath } from "@schematics/angular/utility/config";
 
 interface UpdateJsonFn<T> {
     (obj: T): T | void;
 }
 
 type TsConfigPartialType = {
-    compilerOptions: {
-        baseUrl: string,
-        paths: {
-            [key: string]: string[];
-        },
-    },
     include: string[]
 };
 
