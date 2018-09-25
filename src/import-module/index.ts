@@ -2,7 +2,7 @@ import { Rule, Tree, SchematicContext, chain} from '@angular-devkit/schematics';
 import { addRouteRule } from "../utils/add-route-utils";
 import { addAddReducersAndEpicsRule } from "../utils/add-reducers-and-epics-utils";
 import { addNavigationElementRule } from "../utils/add-navigation-element-rule";
-import { addLibraryToWorkspaceFileRule, updateTsConfigRule } from "../utils/add-configs-utils";
+import { addLibraryToWorkspaceFileRule, updateAppTsConfigRule, updateTsConfigRule } from "../utils/add-configs-utils";
 
 export function importModule(options: any): Rule {
 
@@ -15,7 +15,8 @@ export function importModule(options: any): Rule {
         addAddReducersAndEpicsRule(options),
         addNavigationElementRule(options),
         addLibraryToWorkspaceFileRule(options),
-        updateTsConfigRule(options)
+        updateTsConfigRule(options),
+        updateAppTsConfigRule(options)
         ]);
 
     return rule(host, context);

@@ -8,7 +8,7 @@ import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: ModuleOptions): AddRouteContext {
 
-    let routingModulePath = 'projects/midgard-angular/src/lib/midgard.routing-module.ts';
+    let routingModulePath = 'projects/midgard-angular/src/lib/midgard-routing.module.ts';
     let moduleName = classify(`${options.name}Module`);
 
     return {

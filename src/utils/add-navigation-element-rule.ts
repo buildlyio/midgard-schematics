@@ -13,7 +13,9 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         const navBarElem = cheerioDom('.nav-bar');
         const contentToInsert = `<div class="nav-bar__elem"><a routerLink="/${options.name}"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
         navBarElem.append(contentToInsert);
-        host.overwrite(navigationPath, navBarElem.toString());
+        // string content to append to the file
+        const newFileContent = navBarElem.toString().replace('routerlink', 'routerLink');
+        host.overwrite(navigationPath, newFileContent);
         return host;
     };
 }

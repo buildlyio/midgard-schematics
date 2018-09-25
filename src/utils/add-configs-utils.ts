@@ -7,6 +7,12 @@ interface UpdateJsonFn<T> {
 }
 
 type TsConfigPartialType = {
+    compilerOptions: {
+        baseUrl: string,
+        paths: {
+            [key: string]: string[];
+        },
+    },
     include: string[]
 };
 
@@ -28,7 +34,7 @@ function updateJsonFile<T>(host: Tree, path: string, callback: UpdateJsonFn<T>):
  * @param {ModuleOptions} options
  * @returns {Rule}
  */
-export function updateTsConfigRule (options: ModuleOptions): Rule {
+export function updateAppTsConfigRule (options: ModuleOptions): Rule {
 
     return (host: Tree) => {
         if (!host.exists('src/tsconfig.app.json')) { return host; }
@@ -38,6 +44,23 @@ export function updateTsConfigRule (options: ModuleOptions): Rule {
                 tsconfig.include = [];
             }
             tsconfig.include.push(`../projects/midgard-angular/src/lib/${options.name}.module.ts`);
+        });
+    };
+}
+
+export function updateTsConfigRule(options: ModuleOptions): Rule {
+
+    return (host: Tree) => {
+        if (!host.exists('tsconfig.json')) { return host; }
+
+        return updateJsonFile(host, 'tsconfig.json', (tsconfig: TsConfigPartialType) => {
+            if (!tsconfig.compilerOptions.paths) {
+                tsconfig.compilerOptions.paths = {};
+            }
+            if (!tsconfig.compilerOptions.paths[options.name]) {
+                tsconfig.compilerOptions.paths[options.name] = [];
+            }
+            tsconfig.compilerOptions.paths[options.name].push(`dist/${options.name}`);
         });
     };
 }
