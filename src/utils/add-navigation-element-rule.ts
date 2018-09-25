@@ -14,7 +14,7 @@ export function addNavigationElementRule (options: ModuleOptions): Rule {
         const contentToInsert = `<div class="nav-bar__elem"><a routerLink="/${options.name}"><i class="fas fa-store"></i>${capitalize(options.name)}</a></div>`;
         navBarElem.append(contentToInsert);
         // string content to append to the file
-        const newFileContent = navBarElem.toString().replace('routerlink', 'routerLink');
+        const newFileContent = navBarElem.toString().replace(new RegExp('routerlink', 'g'), 'routerLink');
         host.overwrite(navigationPath, newFileContent);
         return host;
     };
