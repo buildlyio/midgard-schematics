@@ -90,9 +90,10 @@ gulp.task('init', (done) => {
   for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
     const taskName = `init:${module.name}`;
-    gulp.task(taskName, () => {
+    gulp.task(taskName, (subTaskDone) => {
       process.chdir('projects');
       return clone(module.url, module.name)
+        .catch((err) => { throw new Error(err); })
         .then(() => {
           process.chdir(module.name);
           return new Promise((resolve, reject) => {
@@ -103,9 +104,7 @@ gulp.task('init', (done) => {
           }).catch((err) => { throw new Error(err); });
         })
         .then(schematics(module).catch((err) => { throw new Error(err); }))
-        .catch((err) => {
-          throw new Error(err);
-        });
+        .then(subTaskDone);
     });
     tasksToRun.push(taskName);
 
