@@ -77,7 +77,7 @@ const schematics = (module) => {
   });
 };
 
-gulp.task('init', () => {
+gulp.task('init', (done) => {
   if (!config) {
     throw new Error('Application configuration not found');
   }
@@ -103,13 +103,13 @@ gulp.task('init', () => {
           });
         })
         .then(schematics(module))
-        .catch(() => {
-
+        .catch((err) => {
+          throw new Error(err);
         });
     });
     tasksToRun.push(taskName);
 
-    return gulp.parallel(tasksToRun);
+    return gulp.parallel(tasksToRun)(done);
   }
   process.chdir('../');
 });
