@@ -108,11 +108,8 @@ gulp.task('init', () => {
         });
     });
     tasksToRun.push(taskName);
-    if (module.url) {
-      clone(module.url, module.name);
-    } else {
-      console.warn(`Module ${module.name} has no repo url specified`);
-    }
+
+    return gulp.parallel(tasksToRun);
   }
   process.chdir('../');
 });
