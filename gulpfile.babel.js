@@ -100,9 +100,9 @@ gulp.task('init', (done) => {
               .pipe(install())
               .on('error', reject)
               .on('end', resolve);
-          });
+          }).catch((err) => { throw new Error(err); });
         })
-        .then(schematics(module))
+        .then(schematics(module).catch((err) => { throw new Error(err); }))
         .catch((err) => {
           throw new Error(err);
         });
