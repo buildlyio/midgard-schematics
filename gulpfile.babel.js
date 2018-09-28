@@ -46,7 +46,7 @@ const clone = (url, folderName) => {
 
 const schematics = (module) => {
   return new Promise((resolve, reject) => {
-    process.chdir('../../node_modules/midgard_schematics/');
+    process.chdir('../node_modules/midgard_schematics/');
 
     const exit = {};
     const child = spawn('ng', ['g', '.:import-module', `--name=${module.name}`]);
