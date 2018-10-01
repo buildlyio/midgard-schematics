@@ -44,6 +44,16 @@ const clone = (url, folderName) => {
   });
 };
 
+const npmInstall = () => {
+  process.chdir(module.name);
+  return new Promise((resolve, reject) => {
+    return gulp.src('./package.json')
+      .pipe(install())
+      .on('error', reject)
+      .on('end', resolve);
+  });
+};
+
 const schematics = (module) => {
   return new Promise((resolve, reject) => {
     process.chdir('../node_modules/midgard-schematics/');
@@ -77,6 +87,8 @@ const schematics = (module) => {
   });
 };
 
+const genericErrorHandler = (err) => { throw new Error(err); };
+
 gulp.task('init', (done) => {
   if (!config) {
     throw new Error('Application configuration not found');
@@ -93,17 +105,11 @@ gulp.task('init', (done) => {
     gulp.task(taskName, (subTaskDone) => {
       process.chdir('projects');
       return clone(module.url, module.name)
-        .catch((err) => { throw new Error(err); })
-        .then(() => {
-          process.chdir(module.name);
-          return new Promise((resolve, reject) => {
-            return gulp.src('./package.json')
-              .pipe(install())
-              .on('error', reject)
-              .on('end', resolve);
-          }).catch((err) => { throw new Error(err); });
-        })
-        .then(schematics(module).catch((err) => { throw new Error(err); }))
+        .catch(genericErrorHandler)
+        .then(npmInstall())
+        .catch(genericErrorHandler)
+        .then(schematics(module))
+        .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
