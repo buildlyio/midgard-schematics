@@ -44,7 +44,7 @@ const clone = (url, folderName) => {
   });
 };
 
-const npmInstall = () => {
+const npmInstall = (module) => {
   process.chdir(module.name);
   return new Promise((resolve, reject) => {
     return gulp.src('./package.json')
@@ -106,7 +106,7 @@ gulp.task('init', (done) => {
       process.chdir('projects');
       return clone(module.url, module.name)
         .catch(genericErrorHandler)
-        .then(npmInstall())
+        .then(npmInstall(module))
         .catch(genericErrorHandler)
         .then(schematics(module))
         .catch(genericErrorHandler)
