@@ -45,12 +45,15 @@ const clone = (url, folderName) => {
 };
 
 const npmInstall = (module) => {
-  process.chdir(module.name);
   return new Promise((resolve, reject) => {
+    process.chdir(module.name);
     return gulp.src('./package.json')
       .pipe(install())
       .on('error', reject)
-      .on('end', resolve);
+      .on('end', () => {
+        process.chdir('../');
+        resolve();
+      });
   });
 };
 
@@ -87,7 +90,7 @@ const schematics = (module) => {
   });
 };
 
-const genericErrorHandler = (err) => { throw new Error(err); };
+const genericErrorHandler = (err) => { console.warn(err.message); };
 
 gulp.task('init', (done) => {
   if (!config) {
@@ -106,9 +109,9 @@ gulp.task('init', (done) => {
       process.chdir('projects');
       return clone(module.url, module.name)
         .catch(genericErrorHandler)
-        .then(npmInstall(module))
+        .then(() => { npmInstall(module); })
         .catch(genericErrorHandler)
-        .then(schematics(module))
+        .then(() => { schematics(module); })
         .catch(genericErrorHandler)
         .then(subTaskDone);
     });
