@@ -1,6 +1,5 @@
 import gulp from 'gulp';
 import git from 'gulp-git';
-import install from 'gulp-install';
 import { spawn } from 'child_process';
 import { readFileSync } from 'fs';
 
@@ -44,32 +43,33 @@ const clone = (url, folderName) => {
   });
 };
 
-const npmInstall = (module) => {
-  return new Promise((resolve, reject) => {
-    process.chdir(module.name);
-    return gulp.src('./package.json')
-      .pipe(install())
-      .on('error', reject)
-      .on('end', () => {
-        process.chdir('../');
-        resolve();
-      });
-  });
-};
 
-const schematics = (module) => {
+const runCommand = (command, args = [], wd) => {
+  const cwd = process.cwd();
+  if (wd) {
+    process.chdir(wd);
+  }
   return new Promise((resolve, reject) => {
-    process.chdir('../node_modules/midgard-schematics/');
-
-    const exit = {};
-    const child = spawn('ng', ['g', '.:import-module', `--name=${module.name}`]);
+    const fullCommand = `${command} ${args.join(' ')}`;
+    console.log(`Running command: ${fullCommand}`);
+    const child = spawn(command, args);
 
     child.on('exit', (code, signal) => {
-      exit.code = code;
-      exit.signal = signal;
+      const exit = { code, signal };
+      if (wd) {
+        process.chdir(cwd);
+      }
+      if (!exit.code) {
+        return resolve();
+      } else {
+        return reject(new Error(`Command '${fullCommand}' exited with code ${exit.code}, signal ${exit.signal}`));
+      }
     });
 
     child.on('error', (err) => {
+      if (wd) {
+        process.chdir(cwd);
+      }
       reject(err);
     });
 
@@ -80,14 +80,15 @@ const schematics = (module) => {
     child.stderr.on('data', (data) => {
       console.error(data.toString());
     });
-
-    if (!exit.code) {
-      process.chdir('../../');
-      return resolve();
-    } else {
-      return reject(new Error(`Schematics child process exited with code ${exit.code}, signal ${exit.signal}`));
-    }
   });
+};
+
+const npmInstall = (module) => {
+  return runCommand('npm', ['install'], module.name);
+};
+
+const schematics = (module) => {
+  return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`, '../node_modules/midgard-schematics/']);
 };
 
 const genericErrorHandler = (err) => { console.warn(err.message); };
