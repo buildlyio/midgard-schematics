@@ -54,7 +54,7 @@ const runCommand = (command, args = [], wd) => {
     console.log(`Running command: ${fullCommand}`);
     const child = spawn(command, args);
 
-    child.on('exit', (code, signal) => {
+    child.on('close', (code, signal) => {
       const exit = { code, signal };
       if (wd) {
         process.chdir(cwd);
