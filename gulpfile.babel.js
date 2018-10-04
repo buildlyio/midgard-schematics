@@ -113,6 +113,8 @@ gulp.task('init', (done) => {
     process.chdir('projects');
     return (clone(midgardModule.url, midgardModule.name))
       .catch(genericErrorHandler)
+      .then(() => { return npmInstall(midgardModule); })
+      .catch(genericErrorHandler)
       .then(subTaskDone);
   });
   tasksToRun.push(`init:${midgardModule.name}`);
