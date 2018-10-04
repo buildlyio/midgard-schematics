@@ -8,7 +8,7 @@ import { dasherize } from "@angular-devkit/core/src/utils/strings";
 
 function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAndEpicsContext {
 
-    let storeModulePath = 'projects/midgard-angular/src/lib/modules/store-module/store.ts';
+    let storeModulePath = 'projects/midgard-angular/src/lib/modules/store/store.ts';
     let reducerName = `${options.name}Reducer`;
     let epicName = `${options.name}Epics`;
     let reducerRelativeFileName = `@libs/${options.name}/src/lib/state/${dasherize(options.name)}.reducer`;
