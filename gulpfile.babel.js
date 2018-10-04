@@ -54,7 +54,7 @@ const runCommand = (command, args = [], wd) => {
     console.log(`Running command: ${fullCommand}`);
     const child = spawn(command, args);
 
-    child.on('close', (code, signal) => {
+    child.on('exit', (code, signal) => {
       const exit = { code, signal };
       if (wd) {
         process.chdir(cwd);
@@ -88,7 +88,7 @@ const npmInstall = (module) => {
 };
 
 const schematics = (module) => {
-  return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`, '../node_modules/midgard-schematics/']);
+  return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`], '../node_modules/midgard-schematics/');
 };
 
 const genericErrorHandler = (err) => { console.warn(err.message); };
@@ -110,9 +110,9 @@ gulp.task('init', (done) => {
       process.chdir('projects');
       return clone(module.url, module.name)
         .catch(genericErrorHandler)
-        .then(() => { npmInstall(module); })
+        .then(() => { return npmInstall(module); })
         .catch(genericErrorHandler)
-        .then(() => { schematics(module); })
+        .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
         .then(subTaskDone);
     });
