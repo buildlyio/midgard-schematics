@@ -132,10 +132,10 @@ gulp.task('init', (done) => {
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
-
-    return gulp.series(tasksToRun)(() => {
-      process.chdir('../');
-      done();
-    });
   }
+
+  return gulp.series(tasksToRun)(() => {
+    process.chdir('../');
+    done();
+  });
 });
