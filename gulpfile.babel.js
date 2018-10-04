@@ -121,19 +121,19 @@ gulp.task('init', (done) => {
     const module = config.modules[i];
     const taskName = `init:${module.name}`;
     gulp.task(taskName, (subTaskDone) => {
-      process.chdir('projects');
       return clone(module.url, module.name)
         .catch(genericErrorHandler)
         .then(() => { return npmInstall(module); })
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
-        .then(() => { process.chdir('../'); })
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
 
-    return gulp.series(tasksToRun)(done);
+    return gulp.series(tasksToRun)(() => {
+      process.chdir('../');
+      done();
+    });
   }
-  process.chdir('../');
 });
