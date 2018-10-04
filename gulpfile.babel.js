@@ -27,27 +27,35 @@ const readConfig = () => {
 };
 
 const config = readConfig();
+
 const midgardModule = {
   name: 'midgard-angular',
   url: 'git@github.com:Humanitec/midgard-angular.git'
 };
 
-const clone = (url, folderName) => {
+const updateModuleStatus = (module, newState) => {
+  if (typeof module === 'object' && typeof newState === 'object') {
+    module.status = Object.assign(module.status || {}, newState);
+  }
+};
+
+
+const clone = (module) => {
   const options = {
-    args: folderName
+    args: module.name
   };
 
   return new Promise((resolve, reject) => {
-    git.clone(url, options, (err) => {
+    git.clone(module.url, options, (err) => {
       if (err) {
         console.warn(err.message);
         return reject(err);
       }
+      updateModuleStatus(module, {cloneSucceeded: true});
       return resolve();
     });
   });
 };
-
 
 const runCommand = (command, args = [], wd) => {
   const cwd = process.cwd();
@@ -89,10 +97,16 @@ const runCommand = (command, args = [], wd) => {
 };
 
 const npmInstall = (module) => {
+  if (!module.status || !module.status.cloneSucceeded) {
+    return;
+  }
   return runCommand('npm', ['install'], module.name);
 };
 
 const schematics = (module) => {
+  if (!module.status || !module.status.cloneSucceeded) {
+    return;
+  }
   return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`], '../node_modules/midgard-schematics/');
 };
 
@@ -111,7 +125,7 @@ gulp.task('init', (done) => {
 
   gulp.task(`init:${midgardModule.name}`, (subTaskDone) => {
     process.chdir('projects');
-    return (clone(midgardModule.url, midgardModule.name))
+    return (clone(midgardModule))
       .catch(genericErrorHandler)
       .then(() => { return npmInstall(midgardModule); })
       .catch(genericErrorHandler)
@@ -123,7 +137,7 @@ gulp.task('init', (done) => {
     const module = config.modules[i];
     const taskName = `init:${module.name}`;
     gulp.task(taskName, (subTaskDone) => {
-      return clone(module.url, module.name)
+      return clone(module)
         .catch(genericErrorHandler)
         .then(() => { return npmInstall(module); })
         .catch(genericErrorHandler)
