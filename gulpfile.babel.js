@@ -28,7 +28,7 @@ const readConfig = () => {
 
 const config = readConfig();
 const midgardModule = {
-  module: 'midgard-angular',
+  name: 'midgard-angular',
   url: 'git@github.com:Humanitec/midgard-angular.git'
 };
 
