@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 
 const applicationPath = process.cwd();
 
+
 const readConfig = () => {
   const configPath = applicationPath + '/config.json';
 
@@ -26,6 +27,10 @@ const readConfig = () => {
 };
 
 const config = readConfig();
+const midgardModule = {
+  module: 'midgard-angular',
+  url: 'git@github.com:Humanitec/midgard-angular.git'
+};
 
 const clone = (url, folderName) => {
   const options = {
@@ -103,6 +108,15 @@ gulp.task('init', (done) => {
   }
 
   const tasksToRun = [];
+
+  gulp.task(`init:${midgardModule.name}`, (subTaskDone) => {
+    process.chdir('projects');
+    return (clone(midgardModule.url, midgardModule.name))
+      .catch(genericErrorHandler)
+      .then(subTaskDone);
+  });
+  tasksToRun.push(`init:${midgardModule.name}`);
+
   for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
     const taskName = `init:${module.name}`;
@@ -114,11 +128,12 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
+        .then(() => { process.chdir('../'); })
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
 
-    return gulp.parallel(tasksToRun)(done);
+    return gulp.series(tasksToRun)(done);
   }
   process.chdir('../');
 });
