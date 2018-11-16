@@ -6,13 +6,15 @@ import * as ts from 'typescript';
 import { Change, InsertChange } from "@schematics/angular/utility/change";
 import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
-function createAddRouteContext(options: ModuleOptions): AddRouteContext {
+function createAddRouteContext(options: any): AddRouteContext {
 
-    let routingModulePath = 'projects/midgard-angular/src/lib/midgard-routing.module.ts';
+    let routingModulePath = options.routingModuleOptions.path;
+    let parentComponent = options.routingModuleOptions.parentComponent;
     let moduleName = classify(`${options.name}Module`);
 
     return {
         routingModulePath,
+        parentComponent,
         moduleName
     }
 }
@@ -50,10 +52,41 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     if (!listNode) {
         throw new SchematicsException(`listNode is not defined`);
     }
-    let toAdd = `,
+
+    if(context.parentComponent === 'MidgardComponent') {
+        let toAdd = `,
       {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'}`;
 
-    return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
+        return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
+    } else {
+        let parentComponentNode = listNode.getChildren().find(n => ts.SyntaxKind.Identifier && n.getText() === context.parentComponent)
+
+        if (!parentComponentNode || !parentComponentNode.parent) {
+            throw new SchematicsException(`expected routes variable in ${context.routingModulePath}`);
+        }
+
+        let parentComponentNodeSiblings = parentComponentNode.parent.getChildren();
+        let parentComponentNodeIndex = parentComponentNodeSiblings.indexOf(parentComponentNode);
+        parentComponentNodeSiblings = parentComponentNodeSiblings.slice(parentComponentNodeIndex);
+
+        let parentComponentArrayLiteralExpressionNode = parentComponentNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
+
+        if (!parentComponentArrayLiteralExpressionNode) {
+            throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
+        }
+
+        let parentComponentlistNode = parentComponentArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
+
+        if (!parentComponentlistNode) {
+            throw new SchematicsException(`listNode is not defined`);
+        }
+
+        let toAdd = `,
+      {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'} outlet:'${options.name}'`;
+
+        return new InsertChange(context.routingModulePath, parentComponentlistNode.getEnd(), toAdd);
+    }
+
 }
 
 export function addRouteRule (options: ModuleOptions): Rule {

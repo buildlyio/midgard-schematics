@@ -151,7 +151,7 @@ const schematics = (module) => {
   if (!module.status || !module.status.cloneSucceeded) {
     return;
   }
-  return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`, `--parentComponentPath=${module.config.parentComponentPath}`, `--entryComponent=${module.config.entryComponent}`], '../node_modules/midgard-schematics/');
+  return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`, `--parentExitPointComponent=${module.config.parentExitPointComponent}`, `--routingModuleOptions=${module.config.routingModuleOptions}`], '../node_modules/midgard-schematics/');
 };
 
 

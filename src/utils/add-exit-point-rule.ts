@@ -3,7 +3,7 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { capitalize } from "@angular-devkit/core/src/utils/strings";
 import * as cheerio from 'cheerio'
 
-export function addNavigationElementRule (options: ModuleOptions): Rule {
+export function addExitPointRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         const navigationPath = 'projects/midgard-angular/src/lib/components/nav-bar/nav-bar.component.html'; // we can get this from options as well for more flexibility
         const content: Buffer | null = host.read(navigationPath);
