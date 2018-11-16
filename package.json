@@ -1,6 +1,6 @@
 {
   "name": "midgard-schematics",
-  "version": "0.1.53",
+  "version": "1.0.0",
   "description": "CLI tool for assembling a Walhall app based on Midgard and other modules",
   "scripts": {
     "clean": "rimraf lib",
@@ -30,7 +30,7 @@
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "cheerio": "^1.0.0-rc.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-exec": "^3.0.2",
     "gulp-git": "^2.8.0",
     "jasmine": "^2.8.0",
