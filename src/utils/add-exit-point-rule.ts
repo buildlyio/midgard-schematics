@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio'
 
 export function addExitPointRule (options: any): Rule {
     return (host: Tree) => {
-        const navigationPath = options.parentExitPointComponent.path; // we can get this from options as well for more flexibility
+        const navigationPath = options.parentExitPointComponent.path;
         const content: Buffer | null = host.read(navigationPath);
         let strContent: string = '';
         if(content) strContent = content.toString('utf8');

@@ -31,27 +31,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
     // find the children routes node
-    const childrenRoutesNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'children');
-
-    if (!childrenRoutesNode || !childrenRoutesNode.parent) {
-        throw new SchematicsException(`expected routes variable in ${context.routingModulePath}`);
-    }
-
-    let childrenRoutesNodeSiblings = childrenRoutesNode.parent.getChildren();
-    let childrenRoutesNodeIndex = childrenRoutesNodeSiblings.indexOf(childrenRoutesNode);
-    childrenRoutesNodeSiblings = childrenRoutesNodeSiblings.slice(childrenRoutesNodeIndex);
-
-    let arrayLiteralExpressionNode = childrenRoutesNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
-
-    if (!arrayLiteralExpressionNode) {
-        throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
-    }
-
-    let listNode = arrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
-
-    if (!listNode) {
-        throw new SchematicsException(`listNode is not defined`);
-    }
+    let listNode = findListNode(nodes, 'children');
 
     if(context.parentComponent === 'MidgardComponent') {
         let toAdd = `,
@@ -59,34 +39,40 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
-        let parentComponentNode = listNode.getChildren().find(n => ts.SyntaxKind.Identifier && n.getText() === context.parentComponent)
-
-        if (!parentComponentNode || !parentComponentNode.parent) {
-            throw new SchematicsException(`expected routes variable in ${context.routingModulePath}`);
-        }
-
-        let parentComponentNodeSiblings = parentComponentNode.parent.getChildren();
-        let parentComponentNodeIndex = parentComponentNodeSiblings.indexOf(parentComponentNode);
-        parentComponentNodeSiblings = parentComponentNodeSiblings.slice(parentComponentNodeIndex);
-
-        let parentComponentArrayLiteralExpressionNode = parentComponentNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
-
-        if (!parentComponentArrayLiteralExpressionNode) {
-            throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
-        }
-
-        let parentComponentlistNode = parentComponentArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
-
-        if (!parentComponentlistNode) {
-            throw new SchematicsException(`listNode is not defined`);
-        }
+        let parentComponentListNode = findListNode(listNode.getChildren(), 'children');
 
         let toAdd = `,
       {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'} outlet:'${options.name}'`;
 
-        return new InsertChange(context.routingModulePath, parentComponentlistNode.getEnd(), toAdd);
+        return new InsertChange(context.routingModulePath, parentComponentListNode.getEnd(), toAdd);
     }
 
+}
+
+function findListNode(nodes: ts.Node[], searchText: string) {
+    let parentComponentNode = nodes.find(n => ts.SyntaxKind.Identifier && n.getText() === searchText);
+
+    if (!parentComponentNode || !parentComponentNode.parent) {
+        throw new SchematicsException(`node not found`);
+    }
+
+    let NodeSiblings = parentComponentNode.parent.getChildren();
+    let NodeIndex = NodeSiblings.indexOf(parentComponentNode);
+    NodeSiblings = NodeSiblings.slice(NodeIndex);
+
+    let ArrayLiteralExpressionNode = NodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
+
+    if (!ArrayLiteralExpressionNode) {
+        throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
+    }
+
+    let listNode = ArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
+
+    if (!listNode) {
+        throw new SchematicsException(`listNode is not defined`);
+    }
+
+    return listNode;
 }
 
 export function addRouteRule (options: ModuleOptions): Rule {
