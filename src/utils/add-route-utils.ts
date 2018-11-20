@@ -63,6 +63,8 @@ function findListNode(nodes: ts.Node[], searchText: string) {
     let ArrayLiteralExpressionNode = NodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
 
     if (!ArrayLiteralExpressionNode) {
+        console.log('parentComponentNode', parentComponentNode);
+        console.log('NodeSiblings', NodeSiblings);
         throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
     }
 
