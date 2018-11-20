@@ -22,7 +22,7 @@ function createAddRouteContext(options: any): AddRouteContext {
 function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, options: any): Change {
 
     let text = host.read(context.routingModulePath);
-    console.log(options.routingModuleOptions.path);
+    console.log(JSON.stringify(options));
     if (!text) throw new SchematicsException(`Routing module does not exist.`);
     let sourceText = text.toString('utf-8');
 
