@@ -8,8 +8,8 @@ import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: any): AddRouteContext {
 
-    let routingModulePath = options.config.routingModuleOptions.path;
-    let parentComponent = options.config.routingModuleOptions.parentComponent;
+    let routingModulePath = options.routingModuleOptions.path;
+    let parentComponent = options.routingModuleOptions.parentComponent;
     let moduleName = classify(`${options.name}Module`);
 
     return {
