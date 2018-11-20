@@ -153,7 +153,7 @@ const schematics = (module) => {
   }
   return runCommand('ng', ['g', '.:import-module', `--name=${module.name}`,
       `--parentExitPointComponentPath=${module.config.parentExitPointComponent.path}`,
-      `--parentExitPointComponenElementId=${module.config.parentExitPointComponent.elementId}`,
+      `--parentExitPointComponentElementId=${module.config.parentExitPointComponent.elementId}`,
       `--parentExitPointComponentSelector=${module.config.parentExitPointComponent.componentSelector}`,
       `--parentExitPointComponentLabel=${module.config.parentExitPointComponent.options.label}`,
       `--routingModuleOptionsPath=${module.config.routingModuleOptions.path}`,

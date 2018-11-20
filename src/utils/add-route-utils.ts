@@ -39,7 +39,6 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
-        console.log(context.parentComponent)
         let parentComponentListNode = findListNode(listNode.getChildren(), context.parentComponent);
 
         let toAdd = `,
@@ -51,6 +50,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 }
 
 function findListNode(nodes: ts.Node[], searchText: string) {
+    console.log(nodes);
     let parentComponentNode = nodes.find(n => ts.SyntaxKind.Identifier && n.getText() === searchText);
 
     if (!parentComponentNode || !parentComponentNode.parent) {
