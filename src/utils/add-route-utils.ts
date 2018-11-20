@@ -42,7 +42,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
         let parentComponentListNode = findListNode(nodes, 1);
 
         let toAdd = `,
-      {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'} outlet:'${options.name}'`;
+      {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'}, outlet:'${options.name}'}`;
 
         return new InsertChange(context.routingModulePath, parentComponentListNode.getEnd(), toAdd);
     }
