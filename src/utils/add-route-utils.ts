@@ -8,8 +8,8 @@ import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: any): AddRouteContext {
 
-    let routingModulePath = options.routingModuleOptions.path;
-    let parentComponent = options.routingModuleOptions.parentComponent;
+    let routingModulePath = options.routingModuleOptionsPath;
+    let parentComponent = options.routingModuleOptionsParentComponent;
     let moduleName = classify(`${options.name}Module`);
 
     return {
@@ -22,7 +22,7 @@ function createAddRouteContext(options: any): AddRouteContext {
 function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, options: any): Change {
 
     let text = host.read(context.routingModulePath);
-    console.log(JSON.stringify(options.routingModuleOptions));
+    console.log(JSON.stringify(options));
     if (!text) throw new SchematicsException(`Routing module does not exist.`);
     let sourceText = text.toString('utf-8');
 
