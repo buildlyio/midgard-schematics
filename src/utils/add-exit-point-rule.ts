@@ -8,6 +8,7 @@ export function addExitPointRule (options: any): Rule {
         let strContent: string = '';
         if(content) strContent = content.toString('utf8');
         const cheerioDom = cheerio.load(strContent);
+        console.log(options.parentExitPointComponentElementId);
         const navBarElem = cheerioDom(`#${options.parentExitPointComponentElementId}`);
         const contentToInsert = `<${options.parentExitPointComponentSelector} label="${options.parentExitPointComponentLabel}"></${options.parentExitPointComponentSelector}>`;
         navBarElem.append(contentToInsert);

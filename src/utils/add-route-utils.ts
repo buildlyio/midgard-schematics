@@ -22,7 +22,6 @@ function createAddRouteContext(options: any): AddRouteContext {
 function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, options: any): Change {
 
     let text = host.read(context.routingModulePath);
-    console.log(JSON.stringify(options));
     if (!text) throw new SchematicsException(`Routing module does not exist.`);
     let sourceText = text.toString('utf-8');
 
@@ -40,7 +39,8 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
-        let parentComponentListNode = findListNode(listNode.getChildren(), 'children');
+        console.log(context.parentComponent)
+        let parentComponentListNode = findListNode(listNode.getChildren(), context.parentComponent);
 
         let toAdd = `,
       {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'} outlet:'${options.name}'`;
