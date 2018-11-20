@@ -31,7 +31,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
     // find the children routes node
-    let listNode = findListNode(nodes, 'MidgardComponent');
+    let listNode = findListNode(nodes, 0);
 
     if(context.parentComponent === 'MidgardComponent') {
         let toAdd = `,
@@ -39,7 +39,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
-        let parentComponentListNode = findListNode(nodes, context.parentComponent);
+        let parentComponentListNode = findListNode(nodes, 1);
 
         let toAdd = `,
       {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'} outlet:'${options.name}'`;
@@ -49,22 +49,20 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
 }
 
-function findListNode(nodes: ts.Node[], searchText: string) {
-    let parentComponentNode = nodes.find(n => ts.SyntaxKind.Identifier && n.getText() === searchText);
+function findListNode(nodes: ts.Node[], occurence: number) {
+    let childrenComponentNodeArr = nodes.filter(n => ts.SyntaxKind.Identifier && n.getText() === 'children');
 
-    if (!parentComponentNode || !parentComponentNode.parent) {
+    if (!childrenComponentNodeArr[occurence] || !childrenComponentNodeArr[occurence].parent) {
         throw new SchematicsException(`node not found`);
     }
 
-    let NodeSiblings = parentComponentNode.parent.getChildren();
-    let NodeIndex = NodeSiblings.indexOf(parentComponentNode);
+    let NodeSiblings = childrenComponentNodeArr[occurence].parent.getChildren();
+    let NodeIndex = NodeSiblings.indexOf(childrenComponentNodeArr[occurence]);
     NodeSiblings = NodeSiblings.slice(NodeIndex);
 
     let ArrayLiteralExpressionNode = NodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
 
     if (!ArrayLiteralExpressionNode) {
-        console.log('parentComponentNode', parentComponentNode);
-        console.log('NodeSiblings', NodeSiblings);
         throw new SchematicsException(`arrayLiteralExpressionNode is not defined`);
     }
 
