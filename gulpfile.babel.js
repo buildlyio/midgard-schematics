@@ -155,9 +155,9 @@ const schematics = (module) => {
       `--parentExitPointComponentPath=${module.config.parentExitPointComponent.path}`,
       `--parentExitPointComponentElementId=${module.config.parentExitPointComponent.elementId}`,
       `--parentExitPointComponentSelector=${module.config.parentExitPointComponent.componentSelector}`,
-      `--parentExitPointComponentLabel=${module.config.parentExitPointComponent.options.label}`,
-      `--parentExitPointComponentIcon=${module.config.parentExitPointComponent.options.icon}`,
-      `--parentExitPointComponentRoute=${module.config.parentExitPointComponent.options.route}`,
+      module.config.parentExitPointComponent.options.label ? `--parentExitPointComponentLabel=${module.config.parentExitPointComponent.options.label}` : '',
+      module.config.parentExitPointComponent.options.icon ? `--parentExitPointComponentIcon=${module.config.parentExitPointComponent.options.icon}` : '',
+      module.config.parentExitPointComponent.options.route ? `--parentExitPointComponentRoute=${module.config.parentExitPointComponent.options.route}` : '',
       `--routingModuleOptionsPath=${module.config.routingModuleOptions.path}`,
       `--routingModuleOptionsChildrenArrayIndex=${module.config.routingModuleOptions.childrenArrayIndex}`,
       `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`
