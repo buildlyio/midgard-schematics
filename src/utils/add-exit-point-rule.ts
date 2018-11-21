@@ -8,7 +8,11 @@ export function addExitPointRule (options: any): Rule {
         let strContent: string = '';
         if(content) strContent = content.toString('utf8');
         // parse HTML
-        const cheerioDom = cheerio.load(strContent, {decodeEntities: false});
+        const cheerioDom = cheerio.load(strContent, {
+            decodeEntities: false,
+            lowerCaseTags: false,
+            lowerCaseAttributeNames: false
+        });
         const exitPointComponentHTML = cheerioDom(`#exitPointComponent`);
         const insertToElement = cheerioDom(`#${options.parentExitPointComponentElementId}`); // element to insert HTML to
         const contentToInsert = createContentToAdd(options);
