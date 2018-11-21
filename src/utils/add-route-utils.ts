@@ -10,12 +10,14 @@ function createAddRouteContext(options: any): AddRouteContext {
 
     let routingModulePath = options.routingModuleOptionsPath;
     let parentComponent = options.routingModuleOptionsParentComponent;
+    let childrenArrayIndex = Number(options.routingModuleOptionsChildrenArrayIndex);
     let moduleName = classify(`${options.name}Module`);
 
     return {
         routingModulePath,
         parentComponent,
-        moduleName
+        moduleName,
+        childrenArrayIndex
     }
 }
 
@@ -31,7 +33,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
     // find the children routes node
-    let listNode = findListNode(nodes, 0);
+    let listNode = findListNode(nodes, context.childrenArrayIndex);
 
     if(context.parentComponent === 'MidgardComponent') {
         let toAdd = `,
@@ -39,10 +41,10 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
-        let parentComponentListNode = findListNode(nodes, 1);
+        let parentComponentListNode = findListNode(nodes, context.childrenArrayIndex);
 
         let toAdd = `,
-      {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}'}, outlet:'${options.name}'}`;
+      {path: '${options.name}', loadChildren: '@libs/${options.name}/src/lib/${options.name}.module#${context.moduleName}', outlet: '${options.name}'}`;
 
         return new InsertChange(context.routingModulePath, parentComponentListNode.getEnd(), toAdd);
     }
