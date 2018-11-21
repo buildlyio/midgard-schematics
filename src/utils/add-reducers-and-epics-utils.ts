@@ -86,10 +86,10 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         throw new SchematicsException(`epicsListNode is not defined`);
     }
     let reducerToAdd = `,
-      ${context.reducerName}`;
+        ${context.reducerName}`;
 
     let epicToAdd = `,
-      ${context.epicName}`;
+        ${context.epicName}`;
 
     return [
         new InsertChange(context.storeModulePath, reducersListNode.getEnd(), reducerToAdd),
