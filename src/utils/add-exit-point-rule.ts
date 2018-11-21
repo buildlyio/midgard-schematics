@@ -25,9 +25,9 @@ export function addExitPointRule (options: any): Rule {
 }
 
 function createContentToAdd(options: any): string {
-    const label = options.parentExitPointComponentLabel ? `label="${options.parentExitPointComponentLabel}"`: '';
-    const icon = options.parentExitPointComponentIcon ? `icon="${options.parentExitPointComponentIcon}"`: '';
-    const route = options.parentExitPointComponentRoute ? `route="${options.parentExitPointComponentRoute}"`: '';
+    const label = options.parentExitPointComponentLabel === 'undefined' ? `label="${options.parentExitPointComponentLabel}"`: '';
+    const icon = options.parentExitPointComponentIcon === 'undefined' ? `icon="${options.parentExitPointComponentIcon}"`: '';
+    const route = options.parentExitPointComponentRoute === 'undefined' ? `route="${options.parentExitPointComponentRoute}"`: '';
     if (options.parentExitPointComponentSelector) {
         return `<${options.parentExitPointComponentSelector} ${label} ${route} ${icon}></${options.parentExitPointComponentSelector}>`
     }
