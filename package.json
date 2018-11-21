@@ -1,6 +1,6 @@
 {
   "name": "midgard-schematics",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "CLI tool for assembling a Walhall app based on Midgard and other modules",
   "scripts": {
     "clean": "rimraf lib",
