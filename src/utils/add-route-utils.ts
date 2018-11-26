@@ -33,6 +33,9 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
 
+
+    console.log(nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name))
+    console.log(nodes.filter(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name))
     // validate if the route exists
     if (nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name)){
         throw new SchematicsException(`module already exists`);
