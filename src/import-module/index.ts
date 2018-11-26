@@ -22,6 +22,7 @@ export function importModule(options: any): Rule {
       // get the nodes of the source file
       let nodes: ts.Node[] = getSourceNodes(sourceFile);
 
+      console.log(nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name);
       // validate if the route of the module exists if yes don't run the rules
       if (nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name)){
           throw new SchematicsException(`module already exists`);
