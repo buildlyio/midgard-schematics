@@ -32,6 +32,7 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
+
     // find the children routes node
     let listNode = findListNode(nodes, context.childrenArrayIndex);
 
