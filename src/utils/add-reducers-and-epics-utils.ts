@@ -2,7 +2,7 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
 import { Change, InsertChange } from "@schematics/angular/utility/change";
-import { getSourceNodes, insertImport } from "@schematics/angular/utility/ast-utils";
+import { getSourceNodes, insertImport, isImported } from "@schematics/angular/utility/ast-utils";
 import { AddReducersAndEpicsContext } from "./add-reducers-and-epics-context";
 import { dasherize } from "@angular-devkit/core/src/utils/strings";
 
@@ -90,6 +90,10 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
 
     let epicToAdd = `,
         ${context.epicName}`;
+
+    if(isImported(sourceFile, context.reducerName, context.reducerRelativeFileName) || isImported(sourceFile, context.epicName, context.epicRelativeFileName)){
+        throw new SchematicsException(`Module already exists`);
+    }
 
     return [
         new InsertChange(context.storeModulePath, reducersListNode.getEnd(), reducerToAdd),

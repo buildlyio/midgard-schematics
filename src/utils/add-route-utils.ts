@@ -4,7 +4,7 @@ import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import { classify } from "@angular-devkit/core/src/utils/strings";
 import * as ts from 'typescript';
 import { Change, InsertChange } from "@schematics/angular/utility/change";
-import { getSourceNodes } from "@schematics/angular/utility/ast-utils";
+import { findNode, getSourceNodes } from "@schematics/angular/utility/ast-utils";
 
 function createAddRouteContext(options: any): AddRouteContext {
 
@@ -33,13 +33,11 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(sourceFile);
 
-    console.log(nodes)
-    console.log(nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name))
-    console.log(nodes.filter(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name))
-    // validate if the route exists
-    if (nodes.find(n => ts.SyntaxKind.StringLiteral && n.getText() === options.name)){
-        throw new SchematicsException(`module already exists`);
-    }
+    nodes.forEach( node => {
+        if (findNode(node, ts.SyntaxKind.StringLiteral, options.name)) {
+            throw new SchematicsException(`module already exists`);
+        }
+    });
 
     // find the children routes node
     let listNode = findListNode(nodes, context.childrenArrayIndex);

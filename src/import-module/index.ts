@@ -11,8 +11,8 @@ export function importModule(options: any): Rule {
     options.module = 'projects/midgard-angular/src/lib/midgard.module.ts';
 
     const rule = chain([
-        addRouteRule(options),
         addAddReducersAndEpicsRule(options),
+        addRouteRule(options),
         addExitPointRule(options),
         addLibraryToWorkspaceFileRule(options),
         updateTsConfigRule(options),
