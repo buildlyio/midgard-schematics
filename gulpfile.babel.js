@@ -245,7 +245,7 @@ gulp.task('init', (done) => {
   }
 
   gulp.task(`commit:${midgardModule.name}`, (subTaskDone) => {
-    return (commit(midgardModule, 'projects/midgard-angular'))
+    return (commit(midgardModule, 'midgard-angular'))
       .catch(genericErrorHandler)
       .then(() => {
         process.chdir('../../');
@@ -255,7 +255,7 @@ gulp.task('init', (done) => {
   tasksToRun.push(`commit:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
-    process.chdir('../../');
+    process.chdir('../');
     done();
   });
 });
