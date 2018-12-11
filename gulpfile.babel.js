@@ -237,8 +237,8 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
-        .then(() => { return commit(module); })
-        .catch(genericErrorHandler)
+        // .then(() => { return commit(module); })
+        // .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
