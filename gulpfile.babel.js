@@ -73,12 +73,34 @@ const clone = (module) => {
         console.warn(err.message);
         return reject(err);
       }
-      updateModuleStatus(module, {cloneSucceeded: true});
+      updateModuleStatus(module, { cloneSucceeded: true });
       return resolve();
     });
   });
 };
 
+/**
+ * Asynchronously commits the changes added by midgard schematics
+ *
+ * @param {object} module object
+ * @param {object} working directory for the commit
+ * @returns {Promise} A Promise that will resolve if the commit operation has succeeded and will reject otherwise
+ */
+const commit = (module, wd) => {
+  return new Promise((resolve, reject) => {
+    if (wd) {
+      process.cwd(wd);
+    }
+    git.commit(`${module.name} has been added to the application`, { args: '-a' }, (err) => {
+      if (err) {
+        console.warn(err.message);
+        return reject(err);
+      }
+      updateModuleStatus(module, { commitSucceeded: true });
+      return resolve();
+    });
+  });
+};
 
 /**
  * Asynchronously executes a command by spawning a child process
@@ -215,13 +237,17 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
+        .then(() => { return commit(module); })
+        .catch(genericErrorHandler)
+        .then(() => { return commit(module, 'projects/midgard-angular'); })
+        .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
   }
 
   return gulp.series(tasksToRun)(() => {
-    process.chdir('../');
+    process.chdir('-');
     done();
   });
 });
