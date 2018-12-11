@@ -92,15 +92,10 @@ const commit = (module, wd) => {
     if (wd) {
       process.cwd(wd);
     }
-    git.commit(`${module.name} has been added to the application`, { args: '-a' }, (err) => {
-      if (err) {
-        console.warn(err.message);
-        return reject(err);
-      }
+    git.commit(`${module.name} has been added to the application`, { args: '-a' });
       return resolve();
     });
-  });
-};
+  }
 
 /**
  * Asynchronously executes a command by spawning a child process
@@ -237,8 +232,8 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
-        // .then(() => { return commit(module); })
-        // .catch(genericErrorHandler)
+        .then(() => { return commit(module); })
+        .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
