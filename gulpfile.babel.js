@@ -86,16 +86,14 @@ const clone = (module) => {
  * @param {object} working directory for the commit
  * @returns {Promise} A Promise that will resolve if the commit operation has succeeded and will reject otherwise
  */
-const commit = (module, wd) => {
-  return new Promise((resolve, reject) => {
-    console.log(process.cwd());
-    if (wd) {
-      process.cwd(wd);
-    }
-    git.commit(`${module.name} has been added to the application`, { args: '-a' });
-      return resolve();
-    });
-  }
+// const commit = (module, wd) => {
+//   return new Promise((resolve) => {
+//     if (wd) {
+//       process.cwd(wd);
+//     }
+//     return resolve();
+//   });
+// }
 
 /**
  * Asynchronously executes a command by spawning a child process
@@ -232,7 +230,9 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
-        .then(() => { return commit(module); })
+        .then(() => {
+          git.commit(`${module.name} has been added to the application`, { args: '-a' });
+        })
         .catch(genericErrorHandler)
         .then(subTaskDone);
     });
@@ -240,12 +240,8 @@ gulp.task('init', (done) => {
   }
 
   gulp.task(`commit:${midgardModule.name}`, (subTaskDone) => {
-    return (commit(midgardModule, 'midgard-angular'))
-      .catch(genericErrorHandler)
-      .then(() => {
-        process.chdir('../../');
-        return subTaskDone();
-      });
+    git.commit('modules has been added to the application', { args: '-a' });
+    return subTaskDone();
   });
   tasksToRun.push(`commit:${midgardModule.name}`);
 
