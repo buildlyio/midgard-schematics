@@ -88,7 +88,7 @@ const clone = (module) => {
  */
 const commit = (module, wd) => {
   return new Promise((resolve, reject) => {
-    console.log(process.pwd());
+    console.log(process.cwd());
     if (wd) {
       process.cwd(wd);
     }
@@ -239,15 +239,23 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return commit(module); })
         .catch(genericErrorHandler)
-        .then(() => { return commit(module, 'projects/midgard-angular'); })
-        .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
   }
 
+  gulp.task(`commit:${midgardModule.name}`, (subTaskDone) => {
+    return (commit(midgardModule, 'projects/midgard-angular'))
+      .catch(genericErrorHandler)
+      .then(() => {
+        process.chdir('../../');
+        return subTaskDone();
+      });
+  });
+  tasksToRun.push(`commit:${midgardModule.name}`);
+
   return gulp.series(tasksToRun)(() => {
-    process.chdir('-');
+    process.chdir('../../');
     done();
   });
 });
