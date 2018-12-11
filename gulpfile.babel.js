@@ -88,6 +88,7 @@ const clone = (module) => {
  */
 const commit = (module, wd) => {
   return new Promise((resolve, reject) => {
+    console.log(process.pwd());
     if (wd) {
       process.cwd(wd);
     }
@@ -96,7 +97,6 @@ const commit = (module, wd) => {
         console.warn(err.message);
         return reject(err);
       }
-      updateModuleStatus(module, { commitSucceeded: true });
       return resolve();
     });
   });
