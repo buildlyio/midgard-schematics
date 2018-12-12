@@ -87,7 +87,7 @@ const clone = (module) => {
  * @param {object} wd - the working directory that the command should be executed in
  * @returns {Promise} - A promise that resolves if the child process exits with exit code 0, and rejects otherwise
  */
-const runCommand = (command, args = [], wd) => {
+const runCommand = (command, args = [], wd, dataCallback) => {
   const cwd = process.cwd();
   if (wd) {
     process.chdir(wd);
@@ -117,7 +117,11 @@ const runCommand = (command, args = [], wd) => {
     });
 
     child.stdout.on('data', (data) => {
-      console.log(data.toString());
+      if (dataCallback) {
+        dataCallback(data);
+      } else {
+        console.log(data.toString());
+      }
     });
 
     child.stderr.on('data', (data) => {
@@ -226,7 +230,9 @@ gulp.task('init', (done) => {
     return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task('getCommitId:app', () => {
-    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', []);
+    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+      console.warn('callback function', data.toString());
+    });
   });
   gulp.task(`commit:${midgardModule.name}`, () => {
     process.chdir('midgard-angular');
