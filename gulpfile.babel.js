@@ -251,7 +251,7 @@ gulp.task('init', (done) => {
 
   return gulp.series(tasksToRun)(() => {
     process.chdir('../');
-    writeFileSync(`${applicationPath}/app-state.json`, appState.toString())
+    writeFileSync(`${applicationPath}/app-state.json`, JSON.stringify(appState))
     done();
   });
 });
