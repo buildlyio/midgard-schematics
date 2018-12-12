@@ -5,8 +5,9 @@
   "scripts": {
     "clean": "rimraf lib",
     "copyjson": "cp ./src/collection.json ./lib/",
+    "copysh": "cp ./src/git-log.sh ./lib/",
     "babel:prod": "babel gulpfile.babel.js --out-file ./lib/gulpfile.js",
-    "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod && npm run copyjson",
+    "build": "npm run clean && tsc -p tsconfig.json && npm run babel:prod && npm run copyjson && npm run copysh",
     "test": "npm run build && jasmine **/*_spec.js"
   },
   "main": "./lib/import-module/index.js",
