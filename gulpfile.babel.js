@@ -214,22 +214,20 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
-        .then(() => {
-          console.log('commit', git.commit(`${module.name} has been added to the application`, { args: '-a' }))
-          git.commit(`${module.name} has been added to the application`, { args: '-a' });
-          return true;
-        })
-        .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
   }
 
-  gulp.task(`commit:${midgardModule.name}`, (subTaskDone) => {
-    git.commit('modules has been added to the application', { args: '-a' });
-    return subTaskDone();
+  gulp.task('commit:app', () => {
+    return gulp.src('./').pipe(git.commit('modules has been added to the application'));
   });
-  tasksToRun.push(`commit:${midgardModule.name}`);
+
+  gulp.task(`commit:${midgardModule.name}`, () => {
+    process.chdir('midgard-angular');
+    return gulp.src('./').pipe(git.commit('modules has been added to the application'));
+  });
+  tasksToRun.push('commit:app', `commit:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
     process.chdir('../');
