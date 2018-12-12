@@ -230,7 +230,7 @@ gulp.task('init', (done) => {
   });
   gulp.task('getCommitId:app', () => {
     return runCommand('git', ['log -n 1 --no-decorate | head -n 1'], undefined, (data) => {
-      console.warn('callback function', data);
+      console.warn('callback function', data.toString());
       return true;
     });
   });
