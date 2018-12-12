@@ -229,8 +229,8 @@ gulp.task('init', (done) => {
     return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task('getCommitId:app', () => {
-    return runCommand('git', ['log -n 1 --no-decorate | head -n 1'], undefined, (data) => {
-      console.warn('callback function', data.toString());
+    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+      console.warn('allback function', data.toString());
       return true;
     });
   });
