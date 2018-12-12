@@ -241,7 +241,7 @@ gulp.task('init', (done) => {
     return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
   });
   gulp.task(`getCommitId:${midgardModule.name}`, () => {
-    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+    return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
       appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1];
       console.warn(data.toString());
     });
