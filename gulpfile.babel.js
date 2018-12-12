@@ -87,7 +87,7 @@ const clone = (module) => {
  * @param {object} wd - the working directory that the command should be executed in
  * @returns {Promise} - A promise that resolves if the child process exits with exit code 0, and rejects otherwise
  */
-const runCommand = (command, args = [], wd) => {
+const runCommand = (command, args = [], wd, dataCallback) => {
   const cwd = process.cwd();
   if (wd) {
     process.chdir(wd);
@@ -117,6 +117,9 @@ const runCommand = (command, args = [], wd) => {
     });
 
     child.stdout.on('data', (data) => {
+      if (dataCallback) {
+        dataCallback(data);
+      }
       console.log(data.toString());
     });
 
@@ -223,15 +226,17 @@ gulp.task('init', (done) => {
     return gulp.src('..').pipe(git.add());
   });
   gulp.task('commit:app', () => {
-    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics', { emitData: true })).on('data', (data) => {
-      console.log(data);
+    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
+  });
+  gulp.task('getCommitId:app', () => {
+    return runCommand('git log -n 1 --no-decorate | head -n 1', [], undefined, (data) => {
+      console.warn('callback function', data);
+      return true;
     });
   });
   gulp.task(`commit:${midgardModule.name}`, () => {
     process.chdir('midgard-angular');
-    return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics', { emitData: true })).on('data', (data) => {
-      console.log(data);
-    });
+    return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
   });
   tasksToRun.push('add:app', 'commit:app', `commit:${midgardModule.name}`);
 
