@@ -220,16 +220,16 @@ gulp.task('init', (done) => {
   }
 
   gulp.task('add:app', () => {
-    return gulp.src('.').pipe(git.add());
+    return gulp.src('..').pipe(git.add());
   });
   gulp.task('commit:app', () => {
-    return gulp.src('.').pipe(git.commit('modules has been added to the application by midgard-schematics'));
+    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task(`add:${midgardModule.name}`, () => {
-    return gulp.src('projects/midgard-angular').pipe(git.add());
+    return gulp.src('midgard-angular').pipe(git.add());
   });
   gulp.task(`commit:${midgardModule.name}`, () => {
-    return gulp.src('projects/midgard-angular').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
+    return gulp.src('midgard-angular').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
   });
   tasksToRun.push('add:app', 'commit:app', `add:${midgardModule.name}`, `commit:${midgardModule.name}`);
 
