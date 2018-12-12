@@ -226,10 +226,10 @@ gulp.task('init', (done) => {
     return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task(`commit:${midgardModule.name}`, () => {
-      process.chdir('midgard-angular');
-      return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
+    process.chdir('midgard-angular');
+    return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
   });
-  tasksToRun.push('add:app', 'commit:app', `add:${midgardModule.name}`, `commit:${midgardModule.name}`);
+  tasksToRun.push('add:app', 'commit:app', `commit:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
     process.chdir('../');
