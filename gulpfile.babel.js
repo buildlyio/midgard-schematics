@@ -220,17 +220,18 @@ gulp.task('init', (done) => {
   }
 
   gulp.task('commit:app', () => {
-    return gulp.src('./').pipe(git.commit('modules has been added to the application'));
+      process.chdir('../');
+      return gulp.src('./').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
 
   gulp.task(`commit:${midgardModule.name}`, () => {
-    process.chdir('midgard-angular');
-    return gulp.src('./').pipe(git.commit('modules has been added to the application'));
+    process.chdir('projects/midgard-angular');
+    return gulp.src('./').pipe(git.commit('modules has been injected to the application by midgard-schematics'));
   });
   tasksToRun.push('commit:app', `commit:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
-    process.chdir('../');
+    process.chdir('../../');
     done();
   });
 });
