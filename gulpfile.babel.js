@@ -1,38 +1,39 @@
 import gulp from 'gulp';
 import git from 'gulp-git';
 import { spawn } from 'child_process';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
 
 const applicationPath = process.cwd();
 
 /**
- * Reads the configuration found in the config.json file of
- * the walhall application that this package is installed in
- *
+ * Reads files from the application directory
+ * @param fileName - The name of the file that we want to read
  * @returns {object} the object resulting from parsing the application configuration
  */
-const readConfig = () => {
-  const configPath = applicationPath + '/config.json';
+const readFile = (fileName) => {
+  const filePath = applicationPath + `/${fileName}`;
 
-  let config;
+  let file;
 
   try {
-    config = readFileSync(configPath);
+    file = readFileSync(filePath);
   } catch (e) {
     throw new Error('Error loading application configuration: ' + e.message);
   }
 
   try {
-    config = JSON.parse(config);
+    file = JSON.parse(filePath);
   } catch (e) {
     throw new Error('Error parsing application configuration: ' + e.message);
   }
 
-  return config;
+  return file;
 };
 
-const config = readConfig();
+const config = readFile('config.json');
+const appState = readFile('app-state.json');
+
 
 /**
  * Configuration for midgard module. Currently hard-coded due to the module being mandatory in all Walhall applications.
@@ -231,17 +232,26 @@ gulp.task('init', (done) => {
   });
   gulp.task('getCommitId:app', () => {
     return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      console.warn('callback function', data.toString());
+      appState.app.initCommitId = data.toString().split(' ')[1];
+      console.warn(data.toString());
     });
   });
   gulp.task(`commit:${midgardModule.name}`, () => {
     process.chdir('midgard-angular');
     return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
   });
-  tasksToRun.push('add:app', 'commit:app', 'getCommitId:app', `commit:${midgardModule.name}`);
+  gulp.task(`getCommitId:${midgardModule.name}`, () => {
+    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+      appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1];
+      console.warn(data.toString());
+    });
+  });
+
+  tasksToRun.push('add:app', 'commit:app', 'getCommitId:app', `commit:${midgardModule.name}`, `getCommitId:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
     process.chdir('../');
+    writeFileSync(`${applicationPath}/app-state.json`, appState.toString())
     done();
   });
 });
