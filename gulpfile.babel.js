@@ -23,7 +23,7 @@ const readFile = (fileName) => {
   }
 
   try {
-    file = JSON.parse(filePath);
+    file = JSON.parse(file);
   } catch (e) {
     throw new Error('Error parsing application configuration: ' + e.message);
   }
