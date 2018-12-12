@@ -80,22 +80,6 @@ const clone = (module) => {
 };
 
 /**
- * Asynchronously commits the changes added by midgard schematics
- *
- * @param {object} module object
- * @param {object} working directory for the commit
- * @returns {Promise} A Promise that will resolve if the commit operation has succeeded and will reject otherwise
- */
-// const commit = (module, wd) => {
-//   return new Promise((resolve) => {
-//     if (wd) {
-//       process.cwd(wd);
-//     }
-//     return resolve();
-//   });
-// }
-
-/**
  * Asynchronously executes a command by spawning a child process
  *
  * @param {string} command - the command to be executed, without arguments or parameters
@@ -231,7 +215,9 @@ gulp.task('init', (done) => {
         .then(() => { return schematics(module); })
         .catch(genericErrorHandler)
         .then(() => {
+          console.log('commit', git.commit(`${module.name} has been added to the application`, { args: '-a' }))
           git.commit(`${module.name} has been added to the application`, { args: '-a' });
+          return true;
         })
         .catch(genericErrorHandler)
         .then(subTaskDone);
