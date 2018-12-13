@@ -232,7 +232,7 @@ gulp.task('init', (done) => {
   });
   gulp.task('getCommitId:app', () => {
     return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      appState.app.initCommitId = data.toString().split(' ')[1];
+      appState.app.initCommitId = data.toString().split(' ')[1].trim();
       console.warn(data.toString());
     });
   });
@@ -242,7 +242,7 @@ gulp.task('init', (done) => {
   });
   gulp.task(`getCommitId:${midgardModule.name}`, () => {
     return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1];
+      appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1].trim();
       console.warn(data.toString());
     });
   });
