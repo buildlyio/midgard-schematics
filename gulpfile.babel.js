@@ -217,37 +217,41 @@ gulp.task('init', (done) => {
         .catch(genericErrorHandler)
         .then(() => { return npmInstall(module); })
         .catch(genericErrorHandler)
-        .then(() => { return schematics(module); })
+        .then(() => {
+          if (module.config) {
+              return schematics(module);
+          }
+        })
         .catch(genericErrorHandler)
         .then(subTaskDone);
     });
     tasksToRun.push(taskName);
   }
 
-  gulp.task('add:app', () => {
-    return gulp.src('..').pipe(git.add());
-  });
-  gulp.task('commit:app', () => {
-    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
-  });
-  gulp.task('getCommitId:app', () => {
-    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      appState.app.initCommitId = data.toString().split(' ')[1].trim();
-      console.warn(data.toString());
-    });
-  });
-  gulp.task(`commit:${midgardModule.name}`, () => {
-    process.chdir('midgard-angular');
-    return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
-  });
-  gulp.task(`getCommitId:${midgardModule.name}`, () => {
-    return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1].trim();
-      console.warn(data.toString());
-    });
-  });
-
-  tasksToRun.push('add:app', 'commit:app', 'getCommitId:app', `commit:${midgardModule.name}`, `getCommitId:${midgardModule.name}`);
+  // gulp.task('add:app', () => {
+  //   return gulp.src('..').pipe(git.add());
+  // });
+  // gulp.task('commit:app', () => {
+  //   return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
+  // });
+  // gulp.task('getCommitId:app', () => {
+  //   return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+  //     appState.app.initCommitId = data.toString().split(' ')[1].trim();
+  //     console.warn(data.toString());
+  //   });
+  // });
+  // gulp.task(`commit:${midgardModule.name}`, () => {
+  //   process.chdir('midgard-angular');
+  //   return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
+  // });
+  // gulp.task(`getCommitId:${midgardModule.name}`, () => {
+  //   return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+  //     appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1].trim();
+  //     console.warn(data.toString());
+  //   });
+  // });
+  //
+  // tasksToRun.push('add:app', 'commit:app', 'getCommitId:app', `commit:${midgardModule.name}`, `getCommitId:${midgardModule.name}`);
 
   return gulp.series(tasksToRun)(() => {
     process.chdir('../');
