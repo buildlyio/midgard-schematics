@@ -34,16 +34,6 @@ const readFile = (fileName) => {
 const config = readFile('config.json');
 const appState = readFile('app-state.json');
 
-
-/**
- * Configuration for midgard module. Currently hard-coded due to the module being mandatory in all Walhall applications.
- */
-const midgardModule = {
-  name: 'midgard-angular',
-  url: 'git@github.com:Humanitec/midgard-angular.git'
-};
-
-
 /**
  * Updates the state of the module object loaded from the configuration with the newState
  *
@@ -182,8 +172,7 @@ const genericErrorHandler = (err) => { console.warn(err.message); };
 /**
  * Gulp task which initializes an entire walhall application based on the configuration found in its config.json
  *
- * 1. Clone and npm install midgard-angular
- * 2. Clone, npm install, run schematics#import-module on every module defined in the application's config.json
+ * Clone, npm install, run schematics#import-module on every module defined in the application's config.json
  *
  * Tasks will be executed in sequence. If a clone operation fails, no further operations will be performed on that module.
  *
@@ -198,16 +187,6 @@ gulp.task('init', (done) => {
   }
 
   const tasksToRun = [];
-
-  gulp.task(`init:${midgardModule.name}`, (subTaskDone) => {
-    process.chdir('projects');
-    return (clone(midgardModule))
-      .catch(genericErrorHandler)
-      .then(() => { return npmInstall(midgardModule); })
-      .catch(genericErrorHandler)
-      .then(subTaskDone);
-  });
-  tasksToRun.push(`init:${midgardModule.name}`);
 
   for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
@@ -240,21 +219,11 @@ gulp.task('init', (done) => {
       console.warn(data.toString());
     });
   });
-  gulp.task(`commit:${midgardModule.name}`, () => {
-    process.chdir('midgard-angular');
-    return gulp.src('.').pipe(git.commit('modules has been injected to midgard-angular by midgard-schematics'));
-  });
-  gulp.task(`getCommitId:${midgardModule.name}`, () => {
-    return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
-      appState[`${midgardModule.name}`].initCommitId = data.toString().split(' ')[1].trim();
-      console.warn(data.toString());
-    });
-  });
 
-  tasksToRun.push('add:app', 'commit:app', 'getCommitId:app', `commit:${midgardModule.name}`, `getCommitId:${midgardModule.name}`);
+  tasksToRun.push('add:app', 'commit:app', 'getCommitId:app');
 
   return gulp.series(tasksToRun)(() => {
-    process.chdir('../');
+    process.chdir('../../');
     writeFileSync(`${applicationPath}/app-state.json`, JSON.stringify(appState))
     done();
   });
