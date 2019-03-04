@@ -188,7 +188,8 @@ gulp.task('init', (done) => {
 
   const tasksToRun = [];
 
-  for (let i = 0; i < config.modules.length; i++) {
+    process.chdir('src/clients');
+    for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
     const taskName = `init:${module.name}`;
     gulp.task(taskName, (subTaskDone) => {
@@ -208,10 +209,10 @@ gulp.task('init', (done) => {
   }
 
   gulp.task('add:app', () => {
-    return gulp.src('..').pipe(git.add());
+    return gulp.src('../..').pipe(git.add());
   });
   gulp.task('commit:app', () => {
-    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
+    return gulp.src('../..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task('getCommitId:app', () => {
     return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
