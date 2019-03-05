@@ -157,7 +157,7 @@ const schematics = (module) => {
       `--routingModuleOptionsChildrenArrayIndex=${module.config.routingModuleOptions.childrenArrayIndex}`,
       `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`
       ],
-      '../node_modules/midgard-schematics/');
+      '../../node_modules/midgard-schematics/');
 };
 
 
