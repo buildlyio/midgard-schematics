@@ -209,13 +209,14 @@ gulp.task('init', (done) => {
   }
 
   gulp.task('add:app', () => {
-    return gulp.src('..').pipe(git.add());
+      process.chdir('../');
+      return gulp.src('.').pipe(git.add());
   });
   gulp.task('commit:app', () => {
-    return gulp.src('..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
+    return gulp.src('.').pipe(git.commit('modules has been added to the application by midgard-schematics'));
   });
   gulp.task('getCommitId:app', () => {
-    return runCommand('../../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
+    return runCommand('../node_modules/midgard-schematics/lib/git-log.sh', [], undefined, (data) => {
       appState.app.initCommitId = data.toString().split(' ')[1].trim();
       console.warn(data.toString());
     });
@@ -224,7 +225,7 @@ gulp.task('init', (done) => {
   tasksToRun.push('add:app', 'commit:app', 'getCommitId:app');
 
   return gulp.series(tasksToRun)(() => {
-    process.chdir('../../');
+    process.chdir('../');
     writeFileSync(`${applicationPath}/app-state.json`, JSON.stringify(appState))
     done();
   });
