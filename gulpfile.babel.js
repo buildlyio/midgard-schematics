@@ -209,7 +209,7 @@ gulp.task('init', (done) => {
   }
 
   gulp.task('add:app', () => {
-    return gulp.src('.').pipe(git.add());
+    return gulp.src('..').pipe(git.add());
   });
   gulp.task('commit:app', () => {
     return gulp.src('../..').pipe(git.commit('modules has been added to the application by midgard-schematics'));
