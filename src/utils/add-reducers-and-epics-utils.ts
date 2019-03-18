@@ -4,7 +4,7 @@ import * as ts from 'typescript';
 import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { addProviderToModule, getSourceNodes, insertImport, isImported } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext } from "./add-reducers-and-epics-context";
-import { camelize, classify, dasherize } from '@angular-devkit/core/src/utils/strings';
+import { classify, dasherize } from '@angular-devkit/core/src/utils/strings';
 
 function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAndEpicsContext {
 
