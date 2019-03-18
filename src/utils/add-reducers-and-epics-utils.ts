@@ -109,7 +109,7 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         addConstructorArgument(context, constructorNode),
         // merge two arrays
         insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-        insertImport(storeClassFile, context.storePath, context.epicName, context.epicRelativeFileName),
+        insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName),
         ...addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
     ]
 }
