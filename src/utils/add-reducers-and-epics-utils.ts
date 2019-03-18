@@ -102,16 +102,16 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
     if(isImported(storeClassFile, context.reducerName, context.reducerRelativeFileName) || isImported(storeClassFile, context.epicName, context.epicRelativeFileName)){
         throw new SchematicsException(`Module already exists`);
     }
-
-    return [
+    const changesArr = [
         new InsertChange(context.storePath, reducersListNode.getEnd(), reducerToAdd),
         new InsertChange(context.storePath, epicsListNode.getEnd(), epicToAdd),
         addConstructorArgument(context, constructorNode),
         // merge two arrays
         insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-        insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName),
-        ...addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
-    ]
+        insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
+    ];
+
+    return [...changesArr, ...addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)]
 }
 
 export function addAddReducersAndEpicsRule (options: ModuleOptions): Rule {
