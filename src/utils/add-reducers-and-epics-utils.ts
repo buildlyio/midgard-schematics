@@ -28,14 +28,11 @@ function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAn
 function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 
     let text = host.read(context.storePath);
-    if (!text) throw new SchematicsException(`Store module does not exist.`);
+    if (!text) throw new SchematicsException(`Store Class does not exist.`);
     let sourceText = text.toString('utf-8');
 
     // create the typescript source file of the store class
     let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
-
-    // create the typescript source file of the store module
-    let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
 
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(storeClassFile);
@@ -111,26 +108,18 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
     ];
 
-    return [...changesArr, ...addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)]
+    return changesArr;
 }
 
-export function addAddReducersAndEpicsRule (options: ModuleOptions): Rule {
-    return (host: Tree) => {
-        let context = createAddReducersAndEpicsContext(options);
-        let changes = addAddReducersAndEpicsToStore(context, host);
+function addEpicsToStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 
-        const declarationRecorder = host.beginUpdate(context.storePath);
-        for (let change of changes) {
-            if (change instanceof InsertChange) {
-                declarationRecorder.insertLeft(change.pos, change.toAdd);
-            }
-        }
-        host.commitUpdate(declarationRecorder);
-
-        return host;
-    };
+    let text = host.read(context.storeModulePath);
+    if (!text) throw new SchematicsException(`Store module does not exist.`);
+    let sourceText = text.toString('utf-8');
+    // create the typescript source file of the store module
+    let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
+    return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
 }
-
 
 function addConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
 
@@ -170,7 +159,6 @@ function addConstructorArgument(context: AddReducersAndEpicsContext, constructor
     return new NoopChange();
 }
 
-
 function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
     let children = node.getChildren();
     let next: ts.Node | undefined = undefined;
@@ -181,4 +169,31 @@ function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
         children = next.getChildren();
     }
     return next;
+}
+
+
+export function addAddReducersAndEpicsRule (options: ModuleOptions): Rule {
+    return (host: Tree) => {
+        let context = createAddReducersAndEpicsContext(options);
+        let storeChanges = addAddReducersAndEpicsToStore(context, host);
+        let storeModuleChanges = addEpicsToStoreModuleProviders(context, host);
+
+        const storeRecorder = host.beginUpdate(context.storePath);
+        for (let change of storeChanges) {
+            if (change instanceof InsertChange) {
+                storeRecorder.insertLeft(change.pos, change.toAdd);
+            }
+        }
+
+        const storeModuleRecorder = host.beginUpdate(context.storeModulePath);
+        for (let change of storeModuleChanges) {
+            if (change instanceof InsertChange) {
+                storeModuleRecorder.insertLeft(change.pos, change.toAdd);
+            }
+        }
+        host.commitUpdate(storeRecorder);
+        host.commitUpdate(storeModuleRecorder);
+
+        return host;
+    };
 }
