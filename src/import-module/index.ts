@@ -2,6 +2,7 @@ import { Rule, Tree, SchematicContext, chain} from '@angular-devkit/schematics';
 import { addRouteRule } from "../utils/add-route-utils";
 import { addAddReducersAndEpicsRule } from "../utils/add-reducers-and-epics-utils";
 import { addExitPointRule } from "../utils/add-exit-point-rule";
+import { addCustomStylesAndScriptsToWorkspaceFileRule } from '../utils/add-configs-utils';
 
 export function importModule(options: any): Rule {
 
@@ -10,6 +11,7 @@ export function importModule(options: any): Rule {
         addAddReducersAndEpicsRule(options),
         addRouteRule(options),
         addExitPointRule(options),
+        addCustomStylesAndScriptsToWorkspaceFileRule(options)
         // addLibraryToWorkspaceFileRule(options),
         // updateTsConfigRule(options),
         // updateAppTsConfigRule(options)

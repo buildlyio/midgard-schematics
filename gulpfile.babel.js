@@ -155,7 +155,9 @@ const schematics = (module) => {
       module.config.parentExitPointComponent.options.routerOutlet ? `--parentExitPointComponentRouterOutlet=${module.config.parentExitPointComponent.options.routerOutlet}` : '',
       `--routingModuleOptionsPath=${module.config.routingModuleOptions.path}`,
       `--routingModuleOptionsChildrenArrayIndex=${module.config.routingModuleOptions.childrenArrayIndex}`,
-      `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`
+      `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`,
+      `--styles=${module.config.styles}`,
+      `--scripts=${module.config.scripts}`,
       ],
       '../../node_modules/midgard-schematics/');
 };
