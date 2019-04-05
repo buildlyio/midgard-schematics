@@ -127,11 +127,11 @@ export function addLibraryToWorkspaceFileRule(options: any): Rule {
 export function addStylesAndScriptsToWorkspaceFileRule(options: any): Rule {
     return (host: Tree) => {
         const workspace = getWorkspace(host);
-        if(options.styles && workspace.projects['midgard-angular'].architect.build.styles) {
-            workspace.projects['midgard-angular'].architect.build.styles = [...workspace.projects['midgard-angular'].architect.build.styles, options.styles];
+        if(options.styles && workspace.projects['midgard-angular'].architect.build.options.styles) {
+            workspace.projects['midgard-angular'].architect.build.options.styles = [...workspace.projects['midgard-angular'].architect.build.options.styles, options.styles];
         }
-        if(options.scripts && workspace.projects['midgard-angular'].architect.build.scripts)
-        workspace.projects['midgard-angular'].architect.build.scripts = [...workspace.projects['midgard-angular'].architect.build.scripts, options.scripts];
+        if(options.scripts && workspace.projects['midgard-angular'].architect.build.options.scripts)
+        workspace.projects['midgard-angular'].architect.build.options.scripts = [...workspace.projects['midgard-angular'].architect.build.options.scripts, options.scripts];
         host.overwrite(getWorkspacePath(host), JSON.stringify(workspace, null, 2));
     };
 }
