@@ -4,14 +4,14 @@ import * as ts from 'typescript';
 import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { addProviderToModule, getSourceNodes, insertImport, isImported } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext } from "./add-reducers-and-epics-context";
-import { classify, dasherize } from '@angular-devkit/core/src/utils/strings';
+import { camelize, classify, dasherize } from '@angular-devkit/core/src/utils/strings';
 
 function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAndEpicsContext {
 
     let storePath = 'src/midgard/modules/store/store.ts';
     let storeModulePath = 'src/midgard/modules/store/store.module.ts';
-    let reducerName = `${options.name}Reducer`;
-    let epicName = `${options.name}Epics`;
+    let reducerName = camelize(`${options.name}Reducer`)
+    let epicName = camelize(`${options.name}Epics`);
     let reducerRelativeFileName = `@clients/${options.name}/src/lib/state/${dasherize(options.name)}.reducer`;
     let epicRelativeFileName = `@clients/${options.name}/src/lib/state/${dasherize(options.name)}.epics`;
 
