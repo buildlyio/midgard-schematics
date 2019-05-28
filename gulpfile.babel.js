@@ -184,7 +184,7 @@ gulp.task('init', (done) => {
     throw new Error('Application configuration not found');
   }
 
-  if (!config.modules || !config.modules.length) {
+  if (!config.modules) {
     throw new Error('No application modules found');
   }
 
