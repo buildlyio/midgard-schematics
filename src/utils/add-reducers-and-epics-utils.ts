@@ -100,7 +100,9 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         throw new SchematicsException(`Module already exists`);
     }
     const changesArr = [
+        new InsertChange(context.storePath, reducersListNode.getEnd(), '// SchemticsEntryPointStart'),
         new InsertChange(context.storePath, reducersListNode.getEnd(), reducerToAdd),
+        new InsertChange(context.storePath, reducersListNode.getEnd(), '// SchemticsEntryPointEnd'),
         new InsertChange(context.storePath, epicsListNode.getEnd(), epicToAdd),
         addConstructorArgument(context, constructorNode),
         // merge two arrays
