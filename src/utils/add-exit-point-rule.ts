@@ -30,9 +30,11 @@ function createContentToAdd(options: any): string {
     const route = options.parentExitPointComponentRoute ? `route="${options.parentExitPointComponentRoute}"`: '';
     if (options.parentExitPointComponentSelector) {
         if (options.parentExitPointComponentRouterOutlet) {
-            return `  <${options.parentExitPointComponentSelector} ${label} ${route} ${icon}><router-outlet name="${options.parentExitPointComponentRouterOutlet}"></router-outlet></${options.parentExitPointComponentSelector}>`
+            return `  <${options.parentExitPointComponentSelector} ${label} ${route} ${icon}><router-outlet name="${options.parentExitPointComponentRouterOutlet}"></router-outlet></${options.parentExitPointComponentSelector}>
+`
         } else {
-            return `  <${options.parentExitPointComponentSelector} ${label} ${route} ${icon}></${options.parentExitPointComponentSelector}>`
+            return `  <${options.parentExitPointComponentSelector} ${label} ${route} ${icon}></${options.parentExitPointComponentSelector}>
+`
         }
     }
     else return ''
