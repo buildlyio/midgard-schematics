@@ -88,11 +88,16 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         throw new SchematicsException(`epicsListNode is not defined`);
     }
 
-    let reducerToAdd = `
-        ${context.reducerName}`;
+    let reducerToAdd = `,
+        // SchemticsEntryPointStart
+        ${context.reducerName}
+        // SchemticsEntryPointEnd`;
 
     let epicToAdd = `,
-        ${context.epicName}`;
+        // SchemticsEntryPointStart
+        ${context.epicName}
+        // SchemticsEntryPointEnd`;
+
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
@@ -100,18 +105,8 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
     if(isImported(storeClassFile, context.reducerName, context.reducerRelativeFileName) || isImported(storeClassFile, context.epicName, context.epicRelativeFileName)){
         throw new SchematicsException(`Module already exists`);
     }
-
-  const schematicsEntryPointStartComment = `,
-        // SchemticsEntryPointStart
-    `;
-
-  const schematicsEntryPointEndComment = `
-        // SchemticsEntryPointEnd
-    `;
     const changesArr = [
-        new InsertChange(context.storePath, reducersListNode.getEnd(), schematicsEntryPointStartComment),
         new InsertChange(context.storePath, reducersListNode.getEnd(), reducerToAdd),
-        new InsertChange(context.storePath, reducersListNode.getEnd(), schematicsEntryPointEndComment),
         new InsertChange(context.storePath, epicsListNode.getEnd(), epicToAdd),
         addConstructorArgument(context, constructorNode),
         // merge two arrays
