@@ -2,7 +2,7 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
 import { Change, InsertChange, NoopChange, RemoveChange } from '@schematics/angular/utility/change';
-import { getSourceNodes, insertImport } from '@schematics/angular/utility/ast-utils';
+import { getSourceNodes } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { classify } from '@angular-devkit/core/src/utils/strings';
 
@@ -73,19 +73,21 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
         ${context.reducerName}`;
 
     let epicToDelete = `,
-        ${context.epicName}`
+        ${context.epicName}`;
 
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
+    console.log(reducersListNode.getEnd());
+    console.log(reducersListNode.getEnd() - reducerToDelete.length);
+
     const changesArr = [
-        new RemoveChange(context.storePath, reducersListNode.getEnd(), reducerToDelete),
-        new RemoveChange(context.storePath, epicsListNode.getEnd(), epicToDelete),
+        new RemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
+        new RemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
         deleteConstructorArgument(context, constructorNode),
         // merge two arrays
-        insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-        insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
-
+        // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
+        // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
     ];
 
     return changesArr;
