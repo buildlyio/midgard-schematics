@@ -1,7 +1,7 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
-import { Change, InsertChange, NoopChange, RemoveChange } from '@schematics/angular/utility/change';
+import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { getSourceNodes } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { classify } from '@angular-devkit/core/src/utils/strings';
@@ -76,7 +76,7 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
     ${context.epicName}`;
 
 
-    let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
+    // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
     const changesArr = [
         new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
@@ -100,55 +100,55 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
 //     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
 // }
 
-function deleteConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
+// function deleteConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
+//
+//     let siblings = constructorNode.getChildren();
+//
+//     let parameterListNode = siblings.find(n => n.kind === ts.SyntaxKind.SyntaxList);
+//
+//     if (!parameterListNode) {
+//         throw new SchematicsException(`expected constructor in ${context.storePath} to have a parameter list`);
+//     }
+//
+//     let parameterNodes = parameterListNode.getChildren();
+//
+//     //This function retrieves all child nodes of the constructor and searches for a SyntaxList (=the parameter list) node having
+//     // a TypeReference child which in turn has a Identifier child.
+//     let paramNode = parameterNodes.find(p => {
+//         let typeNode = findSuccessor(p, [ts.SyntaxKind.TypeReference, ts.SyntaxKind.Identifier]);
+//         if (!typeNode) return false;
+//         return typeNode.getText() === classify(context.epicName);
+//     });
+//
+//     // There is already a respective constructor argument --> nothing to do for us here ...
+//     if (paramNode) return new NoopChange();
+//
+//     // Is the new argument the first one?
+//     if (!paramNode && parameterNodes.length == 0) {
+//         let toDelete = `private ${context.epicName}: ${classify(context.epicName)}`;
+//         return new InsertChange(context.storePath, parameterListNode.pos, toDelete);
+//     }
+//     else if (!paramNode && parameterNodes.length > 0) {
+//         let toDelete = `,
+//     private ${context.epicName}: ${classify(context.epicName)}`;
+//         let lastParameter = parameterNodes[parameterNodes.length-1];
+//         return new InsertChange(context.storePath, lastParameter.end, toDelete);
+//     }
+//
+//     return new NoopChange();
+// }
 
-    let siblings = constructorNode.getChildren();
-
-    let parameterListNode = siblings.find(n => n.kind === ts.SyntaxKind.SyntaxList);
-
-    if (!parameterListNode) {
-        throw new SchematicsException(`expected constructor in ${context.storePath} to have a parameter list`);
-    }
-
-    let parameterNodes = parameterListNode.getChildren();
-
-    //This function retrieves all child nodes of the constructor and searches for a SyntaxList (=the parameter list) node having
-    // a TypeReference child which in turn has a Identifier child.
-    let paramNode = parameterNodes.find(p => {
-        let typeNode = findSuccessor(p, [ts.SyntaxKind.TypeReference, ts.SyntaxKind.Identifier]);
-        if (!typeNode) return false;
-        return typeNode.getText() === classify(context.epicName);
-    });
-
-    // There is already a respective constructor argument --> nothing to do for us here ...
-    if (paramNode) return new NoopChange();
-
-    // Is the new argument the first one?
-    if (!paramNode && parameterNodes.length == 0) {
-        let toDelete = `private ${context.epicName}: ${classify(context.epicName)}`;
-        return new InsertChange(context.storePath, parameterListNode.pos, toDelete);
-    }
-    else if (!paramNode && parameterNodes.length > 0) {
-        let toDelete = `,
-    private ${context.epicName}: ${classify(context.epicName)}`;
-        let lastParameter = parameterNodes[parameterNodes.length-1];
-        return new InsertChange(context.storePath, lastParameter.end, toDelete);
-    }
-
-    return new NoopChange();
-}
-
-function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
-    let children = node.getChildren();
-    let next: ts.Node | undefined = undefined;
-
-    for(let syntaxKind of searchPath) {
-        next = children.find(n => n.kind == syntaxKind);
-        if (!next) return null;
-        children = next.getChildren();
-    }
-    return next;
-}
+// function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
+//     let children = node.getChildren();
+//     let next: ts.Node | undefined = undefined;
+//
+//     for(let syntaxKind of searchPath) {
+//         next = children.find(n => n.kind == syntaxKind);
+//         if (!next) return null;
+//         children = next.getChildren();
+//     }
+//     return next;
+// }
 
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
