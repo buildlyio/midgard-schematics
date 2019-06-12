@@ -190,16 +190,17 @@ function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
-      const context = createAddReducersAndEpicsContext(options);
-      const deleteReducerImportChange = deleteReducerImport(context, host);
-      const deleteReducerChange = deleteReducerFromStore(context, host);
-      const deleteEpicChange = deleteEpicFromStore(context, host);
+        const context = createAddReducersAndEpicsContext(options);
+        const deleteReducerImportChange = deleteReducerImport(context, host);
+        const deleteReducerChange = deleteReducerFromStore(context, host);
+        // const deleteEpicChange = deleteEpicFromStore(context, host);
 
-      const deleteChangesArr = [deleteReducerImportChange, deleteReducerChange, deleteEpicChange];
+        const deleteChangesArr = [deleteReducerImportChange, deleteReducerChange];
 
-      deleteChangesArr.reduce((previousChange, currentChange) => {
-          return previousChange.then(() => currentChange.apply(host));
-        }, Promise.resolve()); // initial
-      return host;
+        for (let change of deleteChangesArr) {
+           change.apply(host)
+        }
+
+        return host;
     };
 }

@@ -16,14 +16,12 @@ export class MidgardRemoveChange {
     this.order = pos;
   }
 
-  apply(host: Tree): Promise<any> {
+  apply(host: Tree): Tree {
     const content = host.read(this.path).toString();
     const prefix = content.substring(0, this.pos);
     const suffix = content.substring(this.pos + this.toRemove.length);
     // TODO: throw error if toRemove doesn't match removed string.
     host.overwrite(this.path, `${prefix}${suffix}`);
-    return new Promise((resolve) => {
-      resolve(host);
-    })
+    return host
   }
 }
