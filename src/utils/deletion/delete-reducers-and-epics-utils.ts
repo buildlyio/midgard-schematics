@@ -195,7 +195,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
       const deleteReducerChange = deleteReducerFromStore(context, host);
       const deleteEpicChange = deleteEpicFromStore(context, host);
 
-      const deleteChangesArr = [deleteEpicChange, deleteReducerImportChange, deleteReducerChange];
+      const deleteChangesArr = [deleteReducerImportChange, deleteReducerChange, deleteEpicChange];
 
       deleteChangesArr.reduce((previousChange, currentChange) => {
           return previousChange.then(() => currentChange.apply(host));
