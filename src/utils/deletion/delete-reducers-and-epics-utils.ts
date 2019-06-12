@@ -25,8 +25,7 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
     throw new SchematicsException(`currentReducerNode is not defined`);
   }
 
-  let importToDelete = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}`;
-
+  let importToDelete = `import { ${context.reducerName} } from ${context.reducerRelativeFileName};`;
 
   // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
@@ -191,17 +190,16 @@ function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
-        const context = createAddReducersAndEpicsContext(options);
-        const deleteReducerImportChange = deleteReducerImport(context, host);
-        const deleteReducerChange = deleteReducerFromStore(context, host);
-        const deleteEpicChange = deleteEpicFromStore(context, host);
+      const context = createAddReducersAndEpicsContext(options);
+      const deleteReducerImportChange = deleteReducerImport(context, host);
+      const deleteReducerChange = deleteReducerFromStore(context, host);
+      const deleteEpicChange = deleteEpicFromStore(context, host);
 
-        const deleteChanges = [deleteEpicChange, deleteReducerImportChange, deleteReducerChange];
+      const deleteChangesArr = [deleteEpicChange, deleteReducerImportChange, deleteReducerChange];
 
-        for (let change of deleteChanges) {
-           change.apply(host);
-        }
-
-        return host;
+      deleteChangesArr.reduce((previousChange, currentChange) => {
+          return previousChange.then(() => currentChange.apply(host));
+        }, Promise.resolve()); // initial
+      return host;
     };
 }
