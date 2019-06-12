@@ -7,7 +7,45 @@ import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '..
 import { MidgardRemoveChange } from '../midgard-remove-change';
 // import { classify } from '@angular-devkit/core/src/utils/strings';
 
-function deleteReducersFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
+
+  let text = host.read(context.storePath);
+  if (!text) throw new SchematicsException(`Store Class does not exist.`);
+  let sourceText = text.toString('utf-8');
+
+  // create the typescript source file of the store class
+  let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
+
+  // get the nodes of the source file
+  let nodes: ts.Node[] = getSourceNodes(storeClassFile);
+
+  let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
+
+  if (!currentReducerNode) {
+    throw new SchematicsException(`currentReducerNode is not defined`);
+  }
+
+  let importToDelete = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}`;
+
+
+  // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
+
+  return new MidgardRemoveChange(context.storePath, currentReducerNode.getStart() - 9, importToDelete);
+
+  // const changesArr = [
+  //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
+  //     new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
+  //     // deleteConstructorArgument(context, constructorNode),
+  //     // merge two arrays
+  //     // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
+  //     // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
+  // ];
+
+  // return changesArr;
+}
+
+
+function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 
     let text = host.read(context.storePath);
     if (!text) throw new SchematicsException(`Store Class does not exist.`);
@@ -45,7 +83,7 @@ function deleteReducersFromStore (context: AddReducersAndEpicsContext, host: Tre
     // return changesArr;
 }
 
-function deleteEpicsFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 
   let text = host.read(context.storePath);
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
@@ -153,11 +191,12 @@ function deleteEpicsFromStore (context: AddReducersAndEpicsContext, host: Tree) 
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
-        let context = createAddReducersAndEpicsContext(options);
-        let deleteReducersChange = deleteReducersFromStore(context, host);
-        let deleteEpicsChange = deleteEpicsFromStore(context, host);
+        const context = createAddReducersAndEpicsContext(options);
+        const deleteReducerImportChange = deleteReducerImport(context, host);
+        const deleteReducerChange = deleteReducerFromStore(context, host);
+        const deleteEpicChange = deleteEpicFromStore(context, host);
 
-        const deleteChanges = [deleteEpicsChange, deleteReducersChange];
+        const deleteChanges = [deleteEpicChange, deleteReducerImportChange, deleteReducerChange];
 
         for (let change of deleteChanges) {
            change.apply(host);
