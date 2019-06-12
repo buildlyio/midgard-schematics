@@ -15,9 +15,13 @@
   // The factory is required, except when using the extends field. Then the factory can
   // overwrite the extended schematic factory.
   "schematics": {
-    "import-module": {
+    "insert-module": {
       "description": "A schematic to import a midgard module into the midgard main app",
-      "factory": "./import-module/index#importModule"
+      "factory": "./schematics/index#importModule"
+    },
+    "remove-module": {
+      "description": "A schematic to remove a midgard module from the midgard main app",
+      "factory": "./schematics/index#removeModule"
     }
   }
 }
