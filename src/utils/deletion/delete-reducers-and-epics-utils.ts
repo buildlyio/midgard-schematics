@@ -6,7 +6,7 @@ import { getSourceNodes } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { classify } from '@angular-devkit/core/src/utils/strings';
 
-function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, host: Tree): Change[] {
+function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 
     let text = host.read(context.storePath);
     if (!text) throw new SchematicsException(`Store Class does not exist.`);
@@ -79,9 +79,9 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
     const changesArr = [
-        new RemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
-        new RemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
-        deleteConstructorArgument(context, constructorNode),
+        new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
+        new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
+        // deleteConstructorArgument(context, constructorNode),
         // merge two arrays
         // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
         // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
@@ -157,13 +157,9 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         let storeChanges = deleteReducersAndEpicsFromStore(context, host);
         // let storeModuleChanges = deleteEpicsfromStoreModuleProviders(context, host);
 
-        const storeChangesRecorder = host.beginUpdate(context.storePath);
+        // const storeChangesRecorder = host.beginUpdate(context.storePath);
         for (let change of storeChanges) {
-            console.log(change);
-            console.log(change.description);
-            if (change instanceof RemoveChange) {
-                storeChangesRecorder.insertLeft(change.order, '');
-            }
+           change.apply(host);
         }
 
         // const storeModuleRecorder = host.beginUpdate(context.storeModulePath);
@@ -172,9 +168,36 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         //         storeModuleRecorder.insertLeft(change.pos, change.toAdd);
         //     }
         // }
-        host.commitUpdate(storeChangesRecorder);
+        // host.commitUpdate(storeChangesRecorder);
         // host.commitUpdate(storeModuleRecorder);
 
         return host;
     };
+}
+
+
+/**
+ * Will remove text from the source code.
+ */
+export class MidgardRemoveChange {
+
+  order: number;
+  description: string;
+
+  constructor(public path: string, private pos: number, private toRemove: string) {
+    if (pos < 0) {
+      throw new Error('Negative positions are invalid');
+    }
+    this.description = `Removed ${toRemove} into position ${pos} of ${path}`;
+    this.order = pos;
+  }
+
+  apply(host: Tree): Tree {
+      const content = host.read(this.path).toString();
+      const prefix = content.substring(0, this.pos);
+      const suffix = content.substring(this.pos + this.toRemove.length);
+      // TODO: throw error if toRemove doesn't match removed string.
+      host.overwrite(this.path, `${prefix}${suffix}`);
+      return host
+  }
 }
