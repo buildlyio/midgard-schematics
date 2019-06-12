@@ -282,7 +282,7 @@ gulp.task('cleanup', (done) => {
   for (let i = config.modules.length - 1; i >= 0; i--) {
     const module = config.modules[i];
     const taskName = `cleanup:${module.name}`;
-    gulp.task(() => schematicsRemove(module));
+    gulp.task(taskName, () => schematicsRemove(module));
     tasksToRun.push(taskName);
   }
 
