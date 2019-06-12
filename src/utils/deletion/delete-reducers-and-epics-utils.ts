@@ -162,7 +162,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         let context = createAddReducersAndEpicsContext(options);
         let storeChanges = deleteReducersAndEpicsFromStore(context, host);
-        let storeModuleChanges = deleteEpicsfromStoreModuleProviders(context, host);
+        // let storeModuleChanges = deleteEpicsfromStoreModuleProviders(context, host);
 
         const storeRecorder = host.beginUpdate(context.storePath);
         for (let change of storeChanges) {
@@ -171,14 +171,14 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
             }
         }
 
-        const storeModuleRecorder = host.beginUpdate(context.storeModulePath);
-        for (let change of storeModuleChanges) {
-            if (change instanceof InsertChange) {
-                storeModuleRecorder.insertLeft(change.pos, change.toAdd);
-            }
-        }
+        // const storeModuleRecorder = host.beginUpdate(context.storeModulePath);
+        // for (let change of storeModuleChanges) {
+        //     if (change instanceof InsertChange) {
+        //         storeModuleRecorder.insertLeft(change.pos, change.toAdd);
+        //     }
+        // }
         host.commitUpdate(storeRecorder);
-        host.commitUpdate(storeModuleRecorder);
+        // host.commitUpdate(storeModuleRecorder);
 
         return host;
     };

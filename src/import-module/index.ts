@@ -3,6 +3,7 @@ import { addRouteRule } from "../utils/addition/add-routes-utils";
 import { addReducersAndEpicsRule } from "../utils/addition/add-reducers-and-epics-utils";
 import { addExitPointRule } from "../utils/addition/add-exit-point-rule";
 import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/addition/add-configs-utils';
+import { deleteReducersAndEpicsRule } from '../utils/deletion/delete-reducers-and-epics-utils';
 
 export function insertModule(options: any): Rule {
 
