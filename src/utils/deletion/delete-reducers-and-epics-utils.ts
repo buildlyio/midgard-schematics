@@ -82,50 +82,50 @@ function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree
     // return changesArr;
 }
 
-function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
-
-  let text = host.read(context.storePath);
-  if (!text) throw new SchematicsException(`Store Class does not exist.`);
-  let sourceText = text.toString('utf-8');
-
-  // create the typescript source file of the store class
-  let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
-
-  // get the nodes of the source file
-  let nodes: ts.Node[] = getSourceNodes(storeClassFile);
-
-  // find the epics node
-  const epicsNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'epics');
-
-  if (!epicsNode || !epicsNode.parent) {
-    throw new SchematicsException(`expected reducers variable in ${context.storePath}`);
-  }
-
-  // define epics sibling nodes
-  let epicsNodeSiblings = epicsNode.parent.getChildren();
-  let epicsNodeIndex = epicsNodeSiblings.indexOf(epicsNode);
-  epicsNodeSiblings = epicsNodeSiblings.slice(epicsNodeIndex);
-
-  // get epics array literal experssion
-  let epicsArrayLiteralExpressionNode = epicsNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
-
-  if (!epicsArrayLiteralExpressionNode) {
-    throw new SchematicsException(`epicsArrayLiteralExpressionNode is not defined`);
-  }
-
-  // get epics array list node
-  let epicsListNode = epicsArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
-
-  if (!epicsListNode) {
-    throw new SchematicsException(`epicsListNode is not defined`);
-  }
-
-  let epicToDelete = `
-    ${context.epicName}`;
-
-
-  return new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete);
-}
+// function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+//
+//   let text = host.read(context.storePath);
+//   if (!text) throw new SchematicsException(`Store Class does not exist.`);
+//   let sourceText = text.toString('utf-8');
+//
+//   // create the typescript source file of the store class
+//   let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
+//
+//   // get the nodes of the source file
+//   let nodes: ts.Node[] = getSourceNodes(storeClassFile);
+//
+//   // find the epics node
+//   const epicsNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'epics');
+//
+//   if (!epicsNode || !epicsNode.parent) {
+//     throw new SchematicsException(`expected reducers variable in ${context.storePath}`);
+//   }
+//
+//   // define epics sibling nodes
+//   let epicsNodeSiblings = epicsNode.parent.getChildren();
+//   let epicsNodeIndex = epicsNodeSiblings.indexOf(epicsNode);
+//   epicsNodeSiblings = epicsNodeSiblings.slice(epicsNodeIndex);
+//
+//   // get epics array literal experssion
+//   let epicsArrayLiteralExpressionNode = epicsNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
+//
+//   if (!epicsArrayLiteralExpressionNode) {
+//     throw new SchematicsException(`epicsArrayLiteralExpressionNode is not defined`);
+//   }
+//
+//   // get epics array list node
+//   let epicsListNode = epicsArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
+//
+//   if (!epicsListNode) {
+//     throw new SchematicsException(`epicsListNode is not defined`);
+//   }
+//
+//   let epicToDelete = `
+//     ${context.epicName}`;
+//
+//
+//   return new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete);
+// }
 
 // function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 //
