@@ -2,7 +2,7 @@
 // Option A: Directly referencing the private APIs
 import { Rule, Tree, SchematicsException } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { AddToModuleContext } from './add-to-module-context';
+import { AddToModuleContext } from './context/module-context';
 import * as ts from 'typescript';
 import { addImportToModule } from '@schematics/angular/utility/ast-utils';
 import { classify, dasherize } from '@angular-devkit/core/src/utils/strings';

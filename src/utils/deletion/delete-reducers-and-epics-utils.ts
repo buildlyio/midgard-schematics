@@ -1,31 +1,12 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
-import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
+import { Change, InsertChange, NoopChange, RemoveChange } from '@schematics/angular/utility/change';
 import { addProviderToModule, getSourceNodes, insertImport, isImported } from '@schematics/angular/utility/ast-utils';
-import { AddReducersAndEpicsContext } from "./add-reducers-and-epics-context";
-import { camelize, classify, dasherize } from '@angular-devkit/core/src/utils/strings';
+import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
+import { classify } from '@angular-devkit/core/src/utils/strings';
 
-function createAddReducersAndEpicsContext(options: ModuleOptions): AddReducersAndEpicsContext {
-
-    let storePath = 'src/midgard/modules/store/store.ts';
-    let storeModulePath = 'src/midgard/modules/store/store.module.ts';
-    let reducerName = camelize(`${options.name}Reducer`)
-    let epicName = camelize(`${options.name}Epics`);
-    let reducerRelativeFileName = `@clients/${options.name}/src/lib/state/${dasherize(options.name)}.reducer`;
-    let epicRelativeFileName = `@clients/${options.name}/src/lib/state/${dasherize(options.name)}.epics`;
-
-    return {
-        storePath,
-        storeModulePath,
-        reducerName,
-        reducerRelativeFileName,
-        epicName,
-        epicRelativeFileName
-    }
-}
-
-function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, host: Tree): Change[] {
+function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 
     let text = host.read(context.storePath);
     if (!text) throw new SchematicsException(`Store Class does not exist.`);
@@ -88,36 +69,35 @@ function addAddReducersAndEpicsToStore (context: AddReducersAndEpicsContext, hos
         throw new SchematicsException(`epicsListNode is not defined`);
     }
 
-    let reducerToAdd = `,
-        // SchemticsEntryPointStart
+    let reducerToDelete = `,
         ${context.reducerName}
-        // SchemticsEntryPointEnd`;
+        `;
 
-    let epicToAdd = `,
-        // SchemticsEntryPointStart
+    let epicToDelete = `,
         ${context.epicName}
-        // SchemticsEntryPointEnd`;
+        `
 
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
 
-    if(isImported(storeClassFile, context.reducerName, context.reducerRelativeFileName) || isImported(storeClassFile, context.epicName, context.epicRelativeFileName)){
-        throw new SchematicsException(`Module already exists`);
+    if(!isImported(storeClassFile, context.reducerName, context.reducerRelativeFileName) || !isImported(storeClassFile, context.epicName, context.epicRelativeFileName)){
+        throw new SchematicsException(`Module does not exist`);
     }
     const changesArr = [
-        new InsertChange(context.storePath, reducersListNode.getEnd(), reducerToAdd),
-        new InsertChange(context.storePath, epicsListNode.getEnd(), epicToAdd),
-        addConstructorArgument(context, constructorNode),
+        new RemoveChange(context.storePath, reducersListNode.getEnd(), reducerToDelete),
+        new RemoveChange(context.storePath, epicsListNode.getEnd(), epicToDelete),
+        deleteConstructorArgument(context, constructorNode),
         // merge two arrays
         insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
         insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
+
     ];
 
     return changesArr;
 }
 
-function addEpicsToStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
+function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 
     let text = host.read(context.storeModulePath);
     if (!text) throw new SchematicsException(`Store module does not exist.`);
@@ -127,7 +107,7 @@ function addEpicsToStoreModuleProviders (context: AddReducersAndEpicsContext, ho
     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
 }
 
-function addConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
+function deleteConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
 
     let siblings = constructorNode.getChildren();
 
@@ -152,14 +132,14 @@ function addConstructorArgument(context: AddReducersAndEpicsContext, constructor
 
     // Is the new argument the first one?
     if (!paramNode && parameterNodes.length == 0) {
-        let toAdd = `private ${context.epicName}: ${classify(context.epicName)}`;
-        return new InsertChange(context.storePath, parameterListNode.pos, toAdd);
+        let toDelete = `private ${context.epicName}: ${classify(context.epicName)}`;
+        return new InsertChange(context.storePath, parameterListNode.pos, toDelete);
     }
     else if (!paramNode && parameterNodes.length > 0) {
-        let toAdd = `,
+        let toDelete = `,
     private ${context.epicName}: ${classify(context.epicName)}`;
         let lastParameter = parameterNodes[parameterNodes.length-1];
-        return new InsertChange(context.storePath, lastParameter.end, toAdd);
+        return new InsertChange(context.storePath, lastParameter.end, toDelete);
     }
 
     return new NoopChange();
@@ -178,11 +158,11 @@ function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
 }
 
 
-export function addAddReducersAndEpicsRule (options: ModuleOptions): Rule {
+export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         let context = createAddReducersAndEpicsContext(options);
-        let storeChanges = addAddReducersAndEpicsToStore(context, host);
-        let storeModuleChanges = addEpicsToStoreModuleProviders(context, host);
+        let storeChanges = deleteReducersAndEpicsFromStore(context, host);
+        let storeModuleChanges = deleteEpicsfromStoreModuleProviders(context, host);
 
         const storeRecorder = host.beginUpdate(context.storePath);
         for (let change of storeChanges) {

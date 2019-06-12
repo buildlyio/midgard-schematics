@@ -1,14 +1,14 @@
 import { Rule, Tree, SchematicContext, chain} from '@angular-devkit/schematics';
-import { addRouteRule } from "../utils/add-route-utils";
-import { addAddReducersAndEpicsRule } from "../utils/add-reducers-and-epics-utils";
-import { addExitPointRule } from "../utils/add-exit-point-rule";
-import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/add-configs-utils';
+import { addRouteRule } from "../utils/addition/add-routes-utils";
+import { addReducersAndEpicsRule } from "../utils/addition/add-reducers-and-epics-utils";
+import { addExitPointRule } from "../utils/addition/add-exit-point-rule";
+import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/addition/add-configs-utils';
 
-export function importModule(options: any): Rule {
+export function insertModule(options: any): Rule {
 
   return (host: Tree, context: SchematicContext) => {
     const rule = chain([
-        addAddReducersAndEpicsRule(options),
+        addReducersAndEpicsRule(options),
         addRouteRule(options),
         addExitPointRule(options),
         addStylesAndScriptsToWorkspaceFileRule(options)
@@ -16,6 +16,20 @@ export function importModule(options: any): Rule {
         // updateTsConfigRule(options),
         // updateAppTsConfigRule(options)
         ]);
+
+    return rule(host, context);
+  };
+}
+
+export function removeModule(options: any): Rule {
+
+  return (host: Tree, context: SchematicContext) => {
+    const rule = chain([
+      deleteReducersAndEpicsRule(options),
+      // addRouteRule(options),
+      // addExitPointRule(options),
+      // addStylesAndScriptsToWorkspaceFileRule(options)
+    ]);
 
     return rule(host, context);
   };

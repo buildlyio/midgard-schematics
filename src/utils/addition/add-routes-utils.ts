@@ -1,5 +1,5 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
-import { AddRouteContext } from "./add-route-context";
+import { AddRouteContext } from "../context/routes-context";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import { classify } from "@angular-devkit/core/src/utils/strings";
 import * as ts from 'typescript';
