@@ -82,8 +82,8 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
     console.log(reducersListNode.getEnd() - reducerToDelete.length);
 
     const changesArr = [
-        new RemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
-        new RemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
+        new InsertChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, ''),
+        new InsertChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, ''),
         deleteConstructorArgument(context, constructorNode),
         // merge two arrays
         // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
