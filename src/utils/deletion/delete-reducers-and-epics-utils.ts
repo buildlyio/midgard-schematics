@@ -78,10 +78,6 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
-
-    if(!isImported(storeClassFile, context.reducerName, context.reducerRelativeFileName) || !isImported(storeClassFile, context.epicName, context.epicRelativeFileName)){
-        throw new SchematicsException(`Module does not exist`);
-    }
     const changesArr = [
         new RemoveChange(context.storePath, reducersListNode.getEnd(), reducerToDelete),
         new RemoveChange(context.storePath, epicsListNode.getEnd(), epicToDelete),
