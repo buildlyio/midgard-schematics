@@ -169,9 +169,6 @@ const schematicsInsert = (module) => {
  * @returns {Promise} A Promise that resolves if npm install succeeds, and rejects otherwise
  */
 const schematicsRemove = (module) => {
-  if (!module.status || !module.status.cloneSucceeded) {
-    return;
-  }
   return runCommand('ng', ['g', '.:remove-module', `--name=${module.name}`,
       `--parentExitPointComponentPath=${module.config.parentExitPointComponent.path}`,
       `--parentExitPointComponentElementId=${module.config.parentExitPointComponent.elementId}`,
@@ -283,9 +280,7 @@ gulp.task('cleanup', (done) => {
     const module = config.modules[i];
     const taskName = `cleanup:${module.name}`;
     gulp.task(taskName, (subTaskDone) => {
-      return schematicsRemove(module)
-        .catch(genericErrorHandler)
-        .then(subTaskDone);
+      return schematicsRemove(module).then(subTaskDone);
     });
     tasksToRun.push(taskName);
   }
