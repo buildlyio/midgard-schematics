@@ -1,7 +1,7 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
-import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
+import { Change, InsertChange, NoopChange, RemoveChange } from '@schematics/angular/utility/change';
 import { getSourceNodes } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { classify } from '@angular-devkit/core/src/utils/strings';
@@ -69,21 +69,18 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
         throw new SchematicsException(`epicsListNode is not defined`);
     }
 
-    let reducerToDelete = `,
-        ${context.reducerName}`;
+    let reducerToDelete = `
+    ${context.reducerName}`;
 
-    let epicToDelete = `,
-        ${context.epicName}`;
+    let epicToDelete = `
+    ${context.epicName}`;
 
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
-    console.log(reducersListNode.getEnd());
-    console.log(reducersListNode.getEnd() - reducerToDelete.length);
-
     const changesArr = [
-        new InsertChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, ''),
-        new InsertChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, ''),
+        new RemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
+        new RemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
         deleteConstructorArgument(context, constructorNode),
         // merge two arrays
         // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
@@ -160,10 +157,12 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         let storeChanges = deleteReducersAndEpicsFromStore(context, host);
         // let storeModuleChanges = deleteEpicsfromStoreModuleProviders(context, host);
 
-        const storeRecorder = host.beginUpdate(context.storePath);
+        const storeChangesRecorder = host.beginUpdate(context.storePath);
         for (let change of storeChanges) {
-            if (change instanceof InsertChange) {
-                storeRecorder.insertLeft(change.pos, change.toAdd);
+            console.log(change);
+            console.log(change.description);
+            if (change instanceof RemoveChange) {
+                storeChangesRecorder.insertLeft(change.order, '');
             }
         }
 
@@ -173,7 +172,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         //         storeModuleRecorder.insertLeft(change.pos, change.toAdd);
         //     }
         // }
-        host.commitUpdate(storeRecorder);
+        host.commitUpdate(storeChangesRecorder);
         // host.commitUpdate(storeModuleRecorder);
 
         return host;
