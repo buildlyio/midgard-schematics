@@ -17,7 +17,7 @@
   "schematics": {
     "insert-module": {
       "description": "A schematic to import a midgard module into the midgard main app",
-      "factory": "./schematics/index#importModule"
+      "factory": "./schematics/index#insertModule"
     },
     "remove-module": {
       "description": "A schematic to remove a midgard module from the midgard main app",
