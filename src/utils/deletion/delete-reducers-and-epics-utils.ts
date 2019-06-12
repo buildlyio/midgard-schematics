@@ -2,7 +2,7 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
 import * as ts from 'typescript';
 import { Change, InsertChange, NoopChange, RemoveChange } from '@schematics/angular/utility/change';
-import { addProviderToModule, getSourceNodes, insertImport, isImported } from '@schematics/angular/utility/ast-utils';
+import { getSourceNodes, insertImport, isImported } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { classify } from '@angular-devkit/core/src/utils/strings';
 
