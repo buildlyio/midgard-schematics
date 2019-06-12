@@ -97,15 +97,15 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
     return changesArr;
 }
 
-function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
-
-    let text = host.read(context.storeModulePath);
-    if (!text) throw new SchematicsException(`Store module does not exist.`);
-    let sourceText = text.toString('utf-8');
-    // create the typescript source file of the store module
-    let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
-    return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
-}
+// function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
+//
+//     let text = host.read(context.storeModulePath);
+//     if (!text) throw new SchematicsException(`Store module does not exist.`);
+//     let sourceText = text.toString('utf-8');
+//     // create the typescript source file of the store module
+//     let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
+//     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
+// }
 
 function deleteConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
 
