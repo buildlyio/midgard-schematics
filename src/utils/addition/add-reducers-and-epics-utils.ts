@@ -71,12 +71,10 @@ function addReducersAndEpicsToStore (context: AddReducersAndEpicsContext, host: 
     }
 
     let reducerToAdd = `,
-        ${context.reducerName}
-        `;
+        ${context.reducerName}`;
 
     let epicToAdd = `,
-        ${context.epicName}
-        `
+        ${context.epicName}`
 
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);

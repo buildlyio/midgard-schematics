@@ -70,12 +70,10 @@ function deleteReducersAndEpicsFromStore (context: AddReducersAndEpicsContext, h
     }
 
     let reducerToDelete = `,
-        ${context.reducerName}
-        `;
+        ${context.reducerName}`;
 
     let epicToDelete = `,
-        ${context.epicName}
-        `
+        ${context.epicName}`
 
 
     let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
