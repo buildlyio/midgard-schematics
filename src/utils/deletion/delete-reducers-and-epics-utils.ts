@@ -18,30 +18,11 @@ function deleteReducersFromStore (context: AddReducersAndEpicsContext, host: Tre
 
     // get the nodes of the source file
     let nodes: ts.Node[] = getSourceNodes(storeClassFile);
-    // find the reducers node
-    const reducersNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'reducers');
 
-    if (!reducersNode || !reducersNode.parent) {
-        throw new SchematicsException(`expected reducers variable in ${context.storePath}`);
-    }
+    let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
 
-    // define reducers sibling nodes
-    let reducersNodeSiblings = reducersNode.parent.getChildren();
-    let reducersNodeIndex = reducersNodeSiblings.indexOf(reducersNode);
-    reducersNodeSiblings = reducersNodeSiblings.slice(reducersNodeIndex);
-
-    // get reducers array literal experssion
-    let reducersObjectLiteralExpressionNode = reducersNodeSiblings.find(n => n.kind === ts.SyntaxKind.ObjectLiteralExpression);
-
-    if (!reducersObjectLiteralExpressionNode) {
-        throw new SchematicsException(`reducersArrayLiteralExpressionNode is not defined`);
-    }
-
-    // get reducers array list node
-    let reducersListNode = reducersObjectLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
-
-    if (!reducersListNode) {
-        throw new SchematicsException(`reducersListNode is not defined`);
+    if (!currentReducerNode) {
+      throw new SchematicsException(`currentReducerNode is not defined`);
     }
 
     let reducerToDelete = `
@@ -50,7 +31,7 @@ function deleteReducersFromStore (context: AddReducersAndEpicsContext, host: Tre
 
     // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
 
-    return new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete);
+    return new MidgardRemoveChange(context.storePath, currentReducerNode.getEnd() - reducerToDelete.length, reducerToDelete);
 
     // const changesArr = [
     //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
@@ -176,7 +157,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         let deleteReducersChange = deleteReducersFromStore(context, host);
         let deleteEpicsChange = deleteEpicsFromStore(context, host);
 
-        const deleteChanges = [deleteEpicsChange, deleteReducersChange]
+        const deleteChanges = [deleteEpicsChange, deleteReducersChange];
 
         for (let change of deleteChanges) {
            change.apply(host);
