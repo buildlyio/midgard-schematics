@@ -3,106 +3,69 @@ import { Tree, SchematicsException, Rule } from '@angular-devkit/schematics';
 // import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 import { removeStringFromContent } from '../remove-util';
+import { classify } from '@angular-devkit/core/src/utils/strings';
 // import { classify } from '@angular-devkit/core/src/utils/strings';
 
-function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
+/**
+ * deletes import of an epic a reducer
+ * @param {AddReducersAndEpicsContext} context
+ * @param {Tree} host
+ * @param {"epic" | "reducer"} type - wether the import is for epic or reducer
+ */
+function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'epic' | 'reducer') {
 
   const text = host.read(context.storePath);
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  const importToRemove = `import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`;
+  let name;
+  let relativeFileName;
+
+  if (type === 'epic') {
+    name = context.epicName;
+    relativeFileName = context.epicRelativeFileName;
+  } else {
+    name = context.reducerName;
+    relativeFileName = context.reducerRelativeFileName;
+  }
+
+  const importToRemove = `import { ${name} } from '${relativeFileName}';`;
 
   const newContent = removeStringFromContent(sourceText, importToRemove);
 
   host.overwrite(context.storePath, newContent);
-
 }
 
 
-// function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree) {
-//
-//     let text = host.read(context.storePath);
-//     if (!text) throw new SchematicsException(`Store Class does not exist.`);
-//     let sourceText = text.toString('utf-8');
-//
-//     // create the typescript source file of the store class
-//     let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
-//
-//     // get the nodes of the source file
-//     let nodes: ts.Node[] = getSourceNodes(storeClassFile);
-//     console.log(context.reducerName)
-//
-//     let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
-//
-//     if (!currentReducerNode) {
-//       throw new SchematicsException(`currentReducerNode is not defined`);
-//     }
-//
-//     let reducerToDelete = `
-//     ${context.reducerName}`;
-//
-//
-//     // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
-//
-//     return new MidgardRemoveChange(context.storePath, currentReducerNode.getEnd() - reducerToDelete.length, reducerToDelete);
-//
-//     // const changesArr = [
-//     //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
-//     //     new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
-//     //     // deleteConstructorArgument(context, constructorNode),
-//     //     // merge two arrays
-//     //     // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-//     //     // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
-//     // ];
-//
-//     // return changesArr;
-// }
+function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+  const text = host.read(context.storePath);
+  if (!text) throw new SchematicsException(`Store Class does not exist.`);
+  const sourceText = text.toString('utf-8');
 
-// function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
-//
-//   let text = host.read(context.storePath);
-//   if (!text) throw new SchematicsException(`Store Class does not exist.`);
-//   let sourceText = text.toString('utf-8');
-//
-//   // create the typescript source file of the store class
-//   let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
-//
-//   // get the nodes of the source file
-//   let nodes: ts.Node[] = getSourceNodes(storeClassFile);
-//
-//   // find the epics node
-//   const epicsNode = nodes.find(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === 'epics');
-//
-//   if (!epicsNode || !epicsNode.parent) {
-//     throw new SchematicsException(`expected reducers variable in ${context.storePath}`);
-//   }
-//
-//   // define epics sibling nodes
-//   let epicsNodeSiblings = epicsNode.parent.getChildren();
-//   let epicsNodeIndex = epicsNodeSiblings.indexOf(epicsNode);
-//   epicsNodeSiblings = epicsNodeSiblings.slice(epicsNodeIndex);
-//
-//   // get epics array literal experssion
-//   let epicsArrayLiteralExpressionNode = epicsNodeSiblings.find(n => n.kind === ts.SyntaxKind.ArrayLiteralExpression);
-//
-//   if (!epicsArrayLiteralExpressionNode) {
-//     throw new SchematicsException(`epicsArrayLiteralExpressionNode is not defined`);
-//   }
-//
-//   // get epics array list node
-//   let epicsListNode = epicsArrayLiteralExpressionNode.getChildren().find(n => n.kind === ts.SyntaxKind.SyntaxList);
-//
-//   if (!epicsListNode) {
-//     throw new SchematicsException(`epicsListNode is not defined`);
-//   }
-//
-//   let epicToDelete = `
-//     ${context.epicName}`;
-//
-//
-//   return new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete);
-// }
+  const newContent = removeStringFromContent(sourceText, context.reducerName);
+
+  host.overwrite(context.storePath, newContent);
+}
+
+function deleteEpicFromStoreConstructor (context: AddReducersAndEpicsContext, host: Tree) {
+  const text = host.read(context.storePath);
+  if (!text) throw new SchematicsException(`Store Class does not exist.`);
+  const sourceText = text.toString('utf-8');
+
+  const newContent = removeStringFromContent(sourceText, `private ${context.epicName}: ${classify(context.epicName)}`);
+
+  host.overwrite(context.storePath, newContent);
+}
+
+function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+  const text = host.read(context.storePath);
+  if (!text) throw new SchematicsException(`Store Class does not exist.`);
+  const sourceText = text.toString('utf-8');
+
+  const newContent = removeStringFromContent(sourceText, context.epicName);
+
+  host.overwrite(context.storePath, newContent);
+}
 
 // function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
 //
@@ -112,44 +75,6 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
 //     // create the typescript source file of the store module
 //     let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
 //     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
-// }
-
-// function deleteConstructorArgument(context: AddReducersAndEpicsContext, constructorNode: ts.Node): Change {
-//
-//     let siblings = constructorNode.getChildren();
-//
-//     let parameterListNode = siblings.find(n => n.kind === ts.SyntaxKind.SyntaxList);
-//
-//     if (!parameterListNode) {
-//         throw new SchematicsException(`expected constructor in ${context.storePath} to have a parameter list`);
-//     }
-//
-//     let parameterNodes = parameterListNode.getChildren();
-//
-//     //This function retrieves all child nodes of the constructor and searches for a SyntaxList (=the parameter list) node having
-//     // a TypeReference child which in turn has a Identifier child.
-//     let paramNode = parameterNodes.find(p => {
-//         let typeNode = findSuccessor(p, [ts.SyntaxKind.TypeReference, ts.SyntaxKind.Identifier]);
-//         if (!typeNode) return false;
-//         return typeNode.getText() === classify(context.epicName);
-//     });
-//
-//     // There is already a respective constructor argument --> nothing to do for us here ...
-//     if (paramNode) return new NoopChange();
-//
-//     // Is the new argument the first one?
-//     if (!paramNode && parameterNodes.length == 0) {
-//         let toDelete = `private ${context.epicName}: ${classify(context.epicName)}`;
-//         return new InsertChange(context.storePath, parameterListNode.pos, toDelete);
-//     }
-//     else if (!paramNode && parameterNodes.length > 0) {
-//         let toDelete = `,
-//     private ${context.epicName}: ${classify(context.epicName)}`;
-//         let lastParameter = parameterNodes[parameterNodes.length-1];
-//         return new InsertChange(context.storePath, lastParameter.end, toDelete);
-//     }
-//
-//     return new NoopChange();
 // }
 
 // function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
@@ -168,7 +93,11 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         const context = createAddReducersAndEpicsContext(options);
-        deleteReducerImport(context, host);
-        return host;
+        deleteImport(context, host, 'reducer');
+        deleteImport(context, host, 'epic');
+        deleteReducerFromStore(context, host);
+        deleteEpicFromStoreConstructor(context,host);
+        deleteEpicFromStore(context,host);
+      return host;
     };
 }

@@ -11,7 +11,8 @@ export function removeStringFromContent(content: string, toRemove: string) {
   const pos = content.search(toRemove);
 
   if (pos !== -1 ) {
-    prefix = content.substring(0, pos-1);
+    // remove comma of the line before if there is any
+    (content.charAt(pos - 1) === ',') ? prefix = content.substring(0, pos-1) : prefix = content.substring(0, pos-2);
     suffix = content.substring(pos + toRemove.length);
   }
 
