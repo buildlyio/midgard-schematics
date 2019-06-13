@@ -1,86 +1,65 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
-import * as ts from 'typescript';
 // import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
-import { getSourceNodes } from '@schematics/angular/utility/ast-utils';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
-import { MidgardRemoveChange } from '../midgard-remove-change';
 // import { classify } from '@angular-devkit/core/src/utils/strings';
 
 function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
 
-  let text = host.read(context.storePath);
+  const text = host.read(context.storePath);
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
-  let sourceText = text.toString('utf-8');
+  const sourceText = text.toString('utf-8');
 
-  // create the typescript source file of the store class
-  let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
+  // array that is contains the lines in the code
+  const sourceCodeLinesArr = sourceText.split('\n');
 
-  // get the nodes of the source file
-  let nodes: ts.Node[] = getSourceNodes(storeClassFile);
+  // the position of the import to delete
+  const reducerImportPosition = sourceCodeLinesArr.indexOf(`import { ${context.reducerName} } from ${context.reducerRelativeFileName};`);
 
-  let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
-
-  if (!currentReducerNode) {
-    throw new SchematicsException(`currentReducerNode is not defined`);
-  }
-
-  let importToDelete = `import { ${context.reducerName} } from ${context.reducerRelativeFileName};`;
-
-  // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
-
-  return new MidgardRemoveChange(context.storePath, currentReducerNode.getStart() - 9, importToDelete);
-
-  // const changesArr = [
-  //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
-  //     new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
-  //     // deleteConstructorArgument(context, constructorNode),
-  //     // merge two arrays
-  //     // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-  //     // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
-  // ];
-
-  // return changesArr;
+  // remove the line from the code and join the array again to a string
+  const newContent = sourceCodeLinesArr.splice(reducerImportPosition,1).join('\n');
+  host.overwrite(context.storePath, newContent);
 }
 
 
-function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree) {
-
-    let text = host.read(context.storePath);
-    if (!text) throw new SchematicsException(`Store Class does not exist.`);
-    let sourceText = text.toString('utf-8');
-
-    // create the typescript source file of the store class
-    let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
-
-    // get the nodes of the source file
-    let nodes: ts.Node[] = getSourceNodes(storeClassFile);
-
-    let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
-
-    if (!currentReducerNode) {
-      throw new SchematicsException(`currentReducerNode is not defined`);
-    }
-
-    let reducerToDelete = `
-    ${context.reducerName}`;
-
-
-    // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
-
-    return new MidgardRemoveChange(context.storePath, currentReducerNode.getEnd() - reducerToDelete.length, reducerToDelete);
-
-    // const changesArr = [
-    //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
-    //     new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
-    //     // deleteConstructorArgument(context, constructorNode),
-    //     // merge two arrays
-    //     // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
-    //     // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
-    // ];
-
-    // return changesArr;
-}
+// function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree) {
+//
+//     let text = host.read(context.storePath);
+//     if (!text) throw new SchematicsException(`Store Class does not exist.`);
+//     let sourceText = text.toString('utf-8');
+//
+//     // create the typescript source file of the store class
+//     let storeClassFile = ts.createSourceFile(context.storePath, sourceText, ts.ScriptTarget.Latest, true);
+//
+//     // get the nodes of the source file
+//     let nodes: ts.Node[] = getSourceNodes(storeClassFile);
+//     console.log(context.reducerName)
+//
+//     let currentReducerNode = nodes.find(n => n.getText() === context.reducerName && n.kind === ts.SyntaxKind.Identifier);
+//
+//     if (!currentReducerNode) {
+//       throw new SchematicsException(`currentReducerNode is not defined`);
+//     }
+//
+//     let reducerToDelete = `
+//     ${context.reducerName}`;
+//
+//
+//     // let constructorNode = nodes.find(n => n.kind == ts.SyntaxKind.Constructor);
+//
+//     return new MidgardRemoveChange(context.storePath, currentReducerNode.getEnd() - reducerToDelete.length, reducerToDelete);
+//
+//     // const changesArr = [
+//     //     new MidgardRemoveChange(context.storePath, reducersListNode.getEnd() - reducerToDelete.length, reducerToDelete),
+//     //     new MidgardRemoveChange(context.storePath, epicsListNode.getEnd() - epicToDelete.length, epicToDelete),
+//     //     // deleteConstructorArgument(context, constructorNode),
+//     //     // merge two arrays
+//     //     // insertImport(storeClassFile, context.storePath, context.reducerName, context.reducerRelativeFileName),
+//     //     // insertImport(storeClassFile, context.storePath, classify(context.epicName), context.epicRelativeFileName)
+//     // ];
+//
+//     // return changesArr;
+// }
 
 // function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 //
@@ -191,16 +170,7 @@ function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         const context = createAddReducersAndEpicsContext(options);
-        const deleteReducerImportChange = deleteReducerImport(context, host);
-        const deleteReducerChange = deleteReducerFromStore(context, host);
-        // const deleteEpicChange = deleteEpicFromStore(context, host);
-
-        const deleteChangesArr = [deleteReducerImportChange, deleteReducerChange];
-
-        for (let change of deleteChangesArr) {
-           change.apply(host)
-        }
-
+        deleteReducerImport(context, host);
         return host;
     };
 }
