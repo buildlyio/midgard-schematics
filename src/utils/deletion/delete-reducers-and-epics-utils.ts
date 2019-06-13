@@ -2,6 +2,7 @@ import { ModuleOptions } from "@schematics/angular/utility/find-module";
 import { Tree, SchematicsException, Rule } from '@angular-devkit/schematics';
 // import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
+import { removeStringFromContent } from '../remove-util';
 // import { classify } from '@angular-devkit/core/src/utils/strings';
 
 function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
@@ -11,17 +12,8 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   const sourceText = text.toString('utf-8');
 
   const importToRemove = `import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`;
-  const importToRemovePos = sourceText.search(importToRemove);
 
-  let prefix;
-  let suffix;
-
-  if (importToRemovePos !== -1 ) {
-     prefix = sourceText.substring(0, importToRemovePos);
-     suffix = sourceText.substring(importToRemovePos + importToRemove.length);
-  }
-
-  const newContent = `${prefix}${suffix}`;
+  const newContent = removeStringFromContent(sourceText, importToRemove);
 
   host.overwrite(context.storePath, newContent);
 

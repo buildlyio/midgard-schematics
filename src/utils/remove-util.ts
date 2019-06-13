@@ -1,0 +1,21 @@
+/**
+ * removes a string from a text content
+ * @param {string} content - The content to remove from
+ * @param {string} toRemove - the sting to remove
+ * @returns {string} newContent with the string removed
+ */
+export function removeStringFromContent(content: string, toRemove: string) {
+  let prefix;
+  let suffix;
+
+  const pos = content.search(toRemove);
+
+  if (pos !== -1 ) {
+    prefix = content.substring(0, pos);
+    suffix = content.substring(pos + toRemove.length -1);
+  }
+
+  const newContent = `${prefix}${suffix}`;
+
+  return newContent
+}
