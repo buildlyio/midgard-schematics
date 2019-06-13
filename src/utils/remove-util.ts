@@ -13,7 +13,7 @@ export function removeStringFromContent(content: string, toRemove: string): stri
 
   if (pos !== -1 ) {
     // remove comma of the line before if there is any
-    (content.charAt(pos - 1) === ',') ? prefix = content.substring(0, pos-2) : prefix = content.substring(0, pos-1);
+    (content.charAt(pos - 3) === ',') ? prefix = content.substring(0, pos-4) : prefix = content.substring(0, pos-1);
     suffix = content.substring(pos + toRemove.length);
   }
   if (prefix && suffix) {
