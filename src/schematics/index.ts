@@ -4,6 +4,7 @@ import { addReducersAndEpicsRule } from "../utils/addition/add-reducers-and-epic
 import { addExitPointRule } from "../utils/addition/add-exit-point-rule";
 import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/addition/add-configs-utils';
 import { deleteReducersAndEpicsRule } from '../utils/deletion/delete-reducers-and-epics-utils';
+import { deleteRouteRule } from '../utils/deletion/delete-routes-utils';
 
 export function insertModule(options: any): Rule {
 
@@ -27,8 +28,8 @@ export function removeModule(options: any): Rule {
   return (host: Tree, context: SchematicContext) => {
     const rule = chain([
       deleteReducersAndEpicsRule(options),
-      // addRouteRule(options),
-      // addExitPointRule(options),
+      deleteRouteRule(options),
+      // deleteExitPointRule(options),
       // addStylesAndScriptsToWorkspaceFileRule(options)
     ]);
 

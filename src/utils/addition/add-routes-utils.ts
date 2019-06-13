@@ -41,16 +41,17 @@ function addRouteToChildrenRoutesArray (context: AddRouteContext, host: Tree, op
 
     // find the children routes node
     let listNode = findListNode(nodes, context.childrenArrayIndex);
+    let toAdd;
 
     if(context.parentComponent === 'MidgardComponent') {
-        let toAdd = `,
+        toAdd = `,
       {path: '${options.name}', loadChildren: '@clients/${options.name}/src/lib/${options.name}.module#${context.moduleName}'}`;
 
         return new InsertChange(context.routingModulePath, listNode.getEnd(), toAdd);
     } else {
         let parentComponentListNode = findListNode(nodes, context.childrenArrayIndex);
 
-        let toAdd = `,
+        toAdd = `,
           {path: '${options.name}', loadChildren: '@clients/${options.name}/src/lib/${options.name}.module#${context.moduleName}', outlet: '${options.name}'}`;
 
         return new InsertChange(context.routingModulePath, parentComponentListNode.getEnd(), toAdd);
