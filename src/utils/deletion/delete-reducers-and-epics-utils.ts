@@ -10,10 +10,10 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  const importToRemove = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}';`;
-  const newContent = sourceText.replace(importToRemove, '');
+  // const importToRemove = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}';`;
+  const newContent = sourceText.replace(context.reducerName, 'mughees');
 
-  console.log('content', newContent);
+  console.log('content', sourceText);
 
   console.log(`import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`);
 
