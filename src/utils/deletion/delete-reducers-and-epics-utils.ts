@@ -11,12 +11,17 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   const sourceText = text.toString('utf-8');
 
   const importToRemove = `import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`;
-  const newContent = sourceText.replace(importToRemove, ' ');
+  const importToRemovePos = sourceText.search(importToRemove);
 
-  console.log('content', sourceText);
+  let prefix;
+  let suffix;
 
-  console.log(`import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`);
+  if (importToRemovePos !== -1 ) {
+     prefix = sourceText.substring(0, importToRemovePos);
+     suffix = sourceText.substring(importToRemovePos + importToRemove.length);
+  }
 
+  const newContent = `${prefix}${suffix}`;
 
   host.overwrite(context.storePath, newContent);
 
