@@ -22,7 +22,7 @@ function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'e
   let relativeFileName;
 
   if (type === 'epic') {
-    name = classify(context.epicName)
+    name = classify(context.epicName);
     relativeFileName = context.epicRelativeFileName;
   } else {
     name = context.reducerName;
@@ -30,6 +30,8 @@ function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'e
   }
 
   const importToRemove = `import { ${name} } from '${relativeFileName}';`;
+
+  console.log(importToRemove);
 
   const newContent = removeStringFromContent(sourceText, importToRemove);
 
@@ -84,7 +86,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         deleteImport(context, host, 'epic');
         deleteReducerFromStore(context, host);
         deleteEpicFromStoreConstructor(context,host);
-        // deleteEpicFromStore(context,host);
+        deleteEpicFromStore(context,host);
       return host;
     };
 }

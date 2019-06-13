@@ -276,7 +276,7 @@ gulp.task('cleanup', (done) => {
   const tasksToRun = [];
 
   process.chdir('src/clients');
-  for (let i = config.modules.length - 1; i >= 0; i--) {
+  for (let i = 0; i < config.modules.length; i++) {
     const module = config.modules[i];
     const taskName = `cleanup:${module.name}`;
     gulp.task(taskName, (subTaskDone) => {
