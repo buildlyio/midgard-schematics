@@ -55,7 +55,10 @@ function deleteEpicFromStoreConstructor (context: AddReducersAndEpicsContext, ho
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  const newContent = removeStringFromContent(sourceText, `private ${context.epicName}: ${classify(context.epicName)}`);
+  const toDelete = `,
+    private ${context.epicName}: ${classify(context.epicName)}`;
+
+  const newContent = removeStringFromContent(sourceText, toDelete);
 
   host.overwrite(context.storePath, newContent);
 }
@@ -73,15 +76,18 @@ function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
   host.overwrite(context.storePath, newContent);
 }
 
-// function deleteEpicsfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree): Change[] {
-//
-//     let text = host.read(context.storeModulePath);
-//     if (!text) throw new SchematicsException(`Store module does not exist.`);
-//     let sourceText = text.toString('utf-8');
-//     // create the typescript source file of the store module
-//     let storeModuleFile = ts.createSourceFile(context.storeModulePath, sourceText, ts.ScriptTarget.Latest, true);
-//     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
-// }
+function deleteEpicfromStoreModuleProviders (context: AddReducersAndEpicsContext, host: Tree) {
+  const text = host.read(context.storeModulePath);
+  if (!text) throw new SchematicsException(`Store Class does not exist.`);
+  const sourceText = text.toString('utf-8');
+
+  let epicToDelete = `, ${classify(context.epicName)}`;
+
+  const newContent = removeStringFromContent(sourceText, epicToDelete);
+
+  host.overwrite(context.storePath, newContent);
+}
+
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
@@ -91,6 +97,7 @@ export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
         deleteReducerFromStore(context, host);
         deleteEpicFromStoreConstructor(context,host);
         deleteEpicFromStore(context,host);
+        deleteEpicfromStoreModuleProviders(context, host)
       return host;
     };
 }

@@ -12,8 +12,7 @@ export function removeStringFromContent(content: string, toRemove: string): stri
   const pos = content.search(toRemove);
 
   if (pos !== -1 ) {
-    // if the text to remove has new line
-    console.log(toRemove);
+    // if the text to remove has new line take the position from the first line
     if ((toRemove.match(/\n/g)||[]).length > 0) {
       prefix = content.substring(0, pos);
     } else {
