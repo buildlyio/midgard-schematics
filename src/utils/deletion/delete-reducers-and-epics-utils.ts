@@ -81,7 +81,9 @@ function deleteEpicfromStoreModuleProviders (context: AddReducersAndEpicsContext
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  let epicToDelete = `, ${classify(context.epicName)}`;
+
+  let epicToDelete = `,
+    ${classify(context.epicName)}`;
 
   const newContent = removeStringFromContent(sourceText, epicToDelete);
 
