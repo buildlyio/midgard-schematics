@@ -11,8 +11,8 @@ export function removeStringFromContent(content: string, toRemove: string) {
   const pos = content.search(toRemove);
 
   if (pos !== -1 ) {
-    prefix = content.substring(0, pos);
-    suffix = content.substring(pos + toRemove.length -1);
+    prefix = content.substring(0, pos-1);
+    suffix = content.substring(pos + toRemove.length);
   }
 
   const newContent = `${prefix}${suffix}`;
