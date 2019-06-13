@@ -12,8 +12,13 @@ export function removeStringFromContent(content: string, toRemove: string): stri
   const pos = content.search(toRemove);
 
   if (pos !== -1 ) {
-    // remove comma of the line before if there is any
-    prefix = content.substring(0, pos-1);
+    // if the text to remove has new line
+    console.log(toRemove);
+    if ((toRemove.match(/\n/g)||[]).length > 0) {
+      prefix = content.substring(0, pos);
+    } else {
+      prefix = content.substring(0, pos - 1);
+    }
     suffix = content.substring(pos + toRemove.length);
   }
   if (prefix && suffix) {
