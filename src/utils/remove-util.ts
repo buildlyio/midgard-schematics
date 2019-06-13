@@ -7,6 +7,7 @@
 export function removeStringFromContent(content: string, toRemove: string): string {
   let prefix;
   let suffix;
+  let newContent
 
   const pos = content.search(toRemove);
 
@@ -15,8 +16,10 @@ export function removeStringFromContent(content: string, toRemove: string): stri
     (content.charAt(pos - 1) === ',') ? prefix = content.substring(0, pos-1) : prefix = content.substring(0, pos-2);
     suffix = content.substring(pos + toRemove.length);
   }
-
-  const newContent = `${prefix}${suffix}`;
-
+  if (prefix && suffix) {
+    newContent = `${prefix}${suffix}`;
+  } else { // return the same content if the prefix and suffix variables are not defined
+    newContent = content
+  }
   return newContent
 }
