@@ -13,7 +13,9 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   const importToRemove = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}';`;
   const newContent = sourceText.replace(importToRemove, '');
 
-  console.log(`import { ${context.reducerName} } from '${context.reducerRelativeFileName};'`);
+  console.log('content', newContent);
+
+  console.log(`import { ${context.reducerName} } from '${context.reducerRelativeFileName}';`);
 
 
   host.overwrite(context.storePath, newContent);
