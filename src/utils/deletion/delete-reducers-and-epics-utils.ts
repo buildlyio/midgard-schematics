@@ -12,9 +12,9 @@ import { classify } from '@angular-devkit/core/src/utils/strings';
  * @param {Tree} host
  * @param {"epic" | "reducer"} type - wether the import is for epic or reducer
  */
-function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'epic' | 'reducer') {
+function deleteImport (filePath: string, context: AddReducersAndEpicsContext, host: Tree, type: 'epic' | 'reducer') {
 
-  const text = host.read(context.storePath);
+  const text = host.read(filePath);
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
@@ -33,7 +33,7 @@ function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'e
 
   const newContent = removeStringFromContent(sourceText, importToRemove);
 
-  host.overwrite(context.storePath, newContent);
+  host.overwrite(filePath, newContent);
 }
 
 
@@ -85,19 +85,20 @@ function deleteEpicfromStoreModuleProviders (context: AddReducersAndEpicsContext
 
   const newContent = removeStringFromContent(sourceText, epicToDelete);
 
-  host.overwrite(context.storePath, newContent);
+  host.overwrite(context.storeModulePath, newContent);
 }
 
 
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         const context = createAddReducersAndEpicsContext(options);
-        deleteImport(context, host, 'reducer');
-        deleteImport(context, host, 'epic');
+        deleteImport(context.storePath, context, host, 'reducer');
+        deleteImport(context.storePath, context, host, 'epic');
         deleteReducerFromStore(context, host);
         deleteEpicFromStoreConstructor(context,host);
         deleteEpicFromStore(context,host);
-        deleteEpicfromStoreModuleProviders(context, host)
+        deleteEpicfromStoreModuleProviders(context, host);
+        deleteImport(context.storeModulePath, context, host, 'epic');
       return host;
     };
 }
