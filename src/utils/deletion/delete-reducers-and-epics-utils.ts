@@ -13,8 +13,13 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   // array that is contains the lines in the code
   const sourceCodeLinesArr = sourceText.split('\n');
 
+  console.log(sourceCodeLinesArr);
+
   // the position of the import to delete
   const reducerImportPosition = sourceCodeLinesArr.indexOf(`import { ${context.reducerName} } from ${context.reducerRelativeFileName};`);
+
+  console.log('POSITION',reducerImportPosition);
+  console.log(`import { ${context.reducerName} } from ${context.reducerRelativeFileName};`);
 
   // remove the line from the code and join the array again to a string
   const newContent = sourceCodeLinesArr.splice(reducerImportPosition,1).join('\n');
