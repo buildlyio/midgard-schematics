@@ -7,7 +7,7 @@ import { Change, InsertChange } from "@schematics/angular/utility/change";
 import { findNode, getSourceNodes } from "@schematics/angular/utility/ast-utils";
 import { removeStringFromContent } from '../remove-util';
 
-function deleteRouteFromChildrenRoutesArray (context: AddRouteContext, host: Tree, options: any): Change {
+function deleteRouteFromChildrenRoutesArray (context: AddRouteContext, host: Tree, options: any) {
 
     let text = host.read(context.routingModulePath);
     if (!text) throw new SchematicsException(`Routing module does not exist.`);
