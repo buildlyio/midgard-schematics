@@ -1,5 +1,5 @@
 import { ModuleOptions } from "@schematics/angular/utility/find-module";
-import { Tree, SchematicsException, Rule } from "@angular-devkit/schematics";
+import { Tree, SchematicsException, Rule } from '@angular-devkit/schematics';
 // import { Change, InsertChange, NoopChange } from '@schematics/angular/utility/change';
 import { AddReducersAndEpicsContext, createAddReducersAndEpicsContext } from '../context/reducers-and-epics-context';
 // import { classify } from '@angular-devkit/core/src/utils/strings';
@@ -9,23 +9,15 @@ function deleteReducerImport (context: AddReducersAndEpicsContext, host: Tree) {
   const text = host.read(context.storePath);
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
-  console.log(sourceText);
-  // array that is contains the lines in the code
-  const sourceCodeLinesArr = sourceText.split('\n');
 
-  console.log(sourceCodeLinesArr);
+  const importToRemove = `import { ${context.reducerName} } from ${context.reducerRelativeFileName}';`;
+  const newContent = sourceText.replace(importToRemove, '');
 
-  // the position of the import to delete
-  const reducerImportPosition = sourceCodeLinesArr.indexOf(`import { ${context.reducerName} } from ${context.reducerRelativeFileName}';`);
-
-  console.log('POSITION',reducerImportPosition);
   console.log(`import { ${context.reducerName} } from '${context.reducerRelativeFileName};'`);
 
-  if (reducerImportPosition !== -1) {
-    // remove the line from the code and join the array again to a string
-    const newContent = sourceCodeLinesArr.splice(reducerImportPosition,1).join('\n');
-    host.overwrite(context.storePath, newContent);
-  }
+
+  host.overwrite(context.storePath, newContent);
+
 }
 
 
