@@ -77,27 +77,14 @@ function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
 //     return addProviderToModule(storeModuleFile, context.storeModulePath, classify(context.epicName), context.epicRelativeFileName)
 // }
 
-// function findSuccessor(node: ts.Node, searchPath: ts.SyntaxKind[] ) {
-//     let children = node.getChildren();
-//     let next: ts.Node | undefined = undefined;
-//
-//     for(let syntaxKind of searchPath) {
-//         next = children.find(n => n.kind == syntaxKind);
-//         if (!next) return null;
-//         children = next.getChildren();
-//     }
-//     return next;
-// }
-
-
 export function deleteReducersAndEpicsRule (options: ModuleOptions): Rule {
     return (host: Tree) => {
         const context = createAddReducersAndEpicsContext(options);
         deleteImport(context, host, 'reducer');
         deleteImport(context, host, 'epic');
-        deleteReducerFromStore(context, host);
-        deleteEpicFromStoreConstructor(context,host);
-        deleteEpicFromStore(context,host);
+        // deleteReducerFromStore(context, host);
+        // deleteEpicFromStoreConstructor(context,host);
+        // deleteEpicFromStore(context,host);
       return host;
     };
 }

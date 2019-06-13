@@ -4,7 +4,7 @@
  * @param {string} toRemove - the sting to remove
  * @returns {string} newContent with the string removed
  */
-export function removeStringFromContent(content: string, toRemove: string) {
+export function removeStringFromContent(content: string, toRemove: string): string {
   let prefix;
   let suffix;
 
