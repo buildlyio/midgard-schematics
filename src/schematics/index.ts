@@ -6,6 +6,7 @@ import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/addition/add-co
 import { deleteReducersAndEpicsRule } from '../utils/deletion/delete-reducers-and-epics-utils';
 import { deleteRouteRule } from '../utils/deletion/delete-routes-utils';
 import { deleteExitPointRule } from '../utils/deletion/delete-exit-point-rule';
+import { deleteStylesAndScriptsToWorkspaceFileRule } from '../utils/deletion/delete-configs-utils';
 
 export function insertModule(options: any): Rule {
 
@@ -31,7 +32,7 @@ export function removeModule(options: any): Rule {
       deleteReducersAndEpicsRule(options),
       deleteRouteRule(options),
       deleteExitPointRule(options),
-      // addStylesAndScriptsToWorkspaceFileRule(options)
+      deleteStylesAndScriptsToWorkspaceFileRule(options)
     ]);
 
     return rule(host, context);
