@@ -31,8 +31,6 @@ function deleteImport (context: AddReducersAndEpicsContext, host: Tree, type: 'e
 
   const importToRemove = `import { ${name} } from '${relativeFileName}';`;
 
-  console.log(importToRemove);
-
   const newContent = removeStringFromContent(sourceText, importToRemove);
 
   host.overwrite(context.storePath, newContent);
@@ -44,7 +42,10 @@ function deleteReducerFromStore (context: AddReducersAndEpicsContext, host: Tree
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  const newContent = removeStringFromContent(sourceText, context.reducerName);
+  let reducerToDelete = `,
+        ${context.reducerName}`;
+
+  const newContent = removeStringFromContent(sourceText, reducerToDelete);
 
   host.overwrite(context.storePath, newContent);
 }
@@ -64,7 +65,10 @@ function deleteEpicFromStore (context: AddReducersAndEpicsContext, host: Tree) {
   if (!text) throw new SchematicsException(`Store Class does not exist.`);
   const sourceText = text.toString('utf-8');
 
-  const newContent = removeStringFromContent(sourceText, context.epicName);
+  let epicToDelete = `,
+        ${context.epicName}`;
+
+  const newContent = removeStringFromContent(sourceText, epicToDelete);
 
   host.overwrite(context.storePath, newContent);
 }
