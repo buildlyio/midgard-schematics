@@ -5,6 +5,7 @@ import { addExitPointRule } from "../utils/addition/add-exit-point-rule";
 import { addStylesAndScriptsToWorkspaceFileRule } from '../utils/addition/add-configs-utils';
 import { deleteReducersAndEpicsRule } from '../utils/deletion/delete-reducers-and-epics-utils';
 import { deleteRouteRule } from '../utils/deletion/delete-routes-utils';
+import { deleteExitPointRule } from '../utils/deletion/delete-exit-point-rule';
 
 export function insertModule(options: any): Rule {
 
@@ -29,7 +30,7 @@ export function removeModule(options: any): Rule {
     const rule = chain([
       deleteReducersAndEpicsRule(options),
       deleteRouteRule(options),
-      // deleteExitPointRule(options),
+      deleteExitPointRule(options),
       // addStylesAndScriptsToWorkspaceFileRule(options)
     ]);
 
