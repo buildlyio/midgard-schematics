@@ -133,6 +133,9 @@ export function addStylesAndScriptsToWorkspaceFileRule(options: any): Rule {
         if(options.scripts && options.scripts !== 'undefined' && workspace.projects['midgard-angular'].architect.build.options.scripts) {
             workspace.projects['midgard-angular'].architect.build.options.scripts = [...workspace.projects['midgard-angular'].architect.build.options.scripts, options.scripts];
         }
+      if(options.assets && options.assets !== 'undefined' && workspace.projects['midgard-angular'].architect.build.options.assets) {
+        workspace.projects['midgard-angular'].architect.build.options.assets = [...workspace.projects['midgard-angular'].architect.build.options.assets, options.assets];
+      }
         host.overwrite(getWorkspacePath(host), JSON.stringify(workspace, null, 2));
     };
 }

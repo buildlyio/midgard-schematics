@@ -158,7 +158,8 @@ const schematicsInsert = (module) => {
       `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`,
       `--styles=${module.config.styles}`,
       `--scripts=${module.config.scripts}`,
-      ],
+      `--assets=${module.config.assets}`,
+    ],
       '../../node_modules/midgard-schematics/');
 };
 
@@ -182,6 +183,7 @@ const schematicsRemove = (module) => {
       `--routingModuleOptionsParentComponent=${module.config.routingModuleOptions.parentComponent}`,
       `--styles=${module.config.styles}`,
       `--scripts=${module.config.scripts}`,
+      `--assets=${module.config.assets}`,
     ],
     '../../node_modules/midgard-schematics/');
 };
